@@ -27,9 +27,9 @@ public class functions {
             case "d":
                 return timeValue * 24L * 60L * 60L * 1000L;
             case "mon":
-                return timeValue * 30L * 24L * 60L * 60L * 1000L; // Approximating 1 month as 30 days
+                return timeValue * 30L * 24L * 60L * 60L * 1000L;
             case "yr":
-                return timeValue * 365L * 24L * 60L * 60L * 1000L; // Approximating 1 year as 365 days
+                return timeValue * 365L * 24L * 60L * 60L * 1000L;
             default:
                 return -2;
         }

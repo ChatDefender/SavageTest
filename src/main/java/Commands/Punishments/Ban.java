@@ -3,6 +3,7 @@ package Commands.Punishments;
 import CustomerFunctions.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -54,6 +55,17 @@ public class Ban {
                         success -> event.getChannel().sendMessage("Successfully banned " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue(),
                         error -> event.getChannel().sendMessage("Failed to " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
                 );
+
+                TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                if (tc != null && tc.canTalk()) {
+
+                    tc.sendMessage("```\nUSER BANNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\n```" ).queue();
+
+                } else {
+
+                    event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+                }
+
 
             }
 

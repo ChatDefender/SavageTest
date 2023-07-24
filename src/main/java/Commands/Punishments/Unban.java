@@ -2,11 +2,11 @@ package Commands.Punishments;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
 public class Unban {
-
 
     public void unbanUser(MessageReceivedEvent event, String[] args) {
 
@@ -48,6 +48,17 @@ public class Unban {
                                 error -> event.getChannel().sendMessage("Failed to unban user: " + error.getMessage()).queue()
 
                         );
+
+                        TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                        if (tc != null && tc.canTalk()) {
+
+                            tc.sendMessage("```\nUSER UNBANNED " +  "\nUser: " + user.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\n```" ).queue();
+
+                        } else {
+
+                            event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+                        }
+
 
                     } else {
 

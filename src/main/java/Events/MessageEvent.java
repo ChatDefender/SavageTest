@@ -1,11 +1,9 @@
 package Events;
 
-import Commands.Punishments.Ban;
-import Commands.Punishments.Unban;
+import Commands.Punishments.*;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -44,13 +42,16 @@ public class MessageEvent extends ListenerAdapter {
                                 new Ban().banUser(event, args);
                                 break;
                             case "mute":
+                                new Mute().muteUser(event, args);
                                 break;
                             case "unban":
                                 new Unban().unbanUser(event, args);
                                 break;
                             case "unmute":
+                                new Unmute().unmuteUser(event, args);
                                 break;
                             case "warn":
+                                new Warn().warnUser(event, args);
                                 break;
                             case "clearlogs":
                                 break;
