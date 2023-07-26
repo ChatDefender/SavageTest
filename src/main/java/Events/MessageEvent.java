@@ -1,6 +1,7 @@
 package Events;
 
 import Commands.Punishments.*;
+import Commands.Log.*;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -38,6 +39,9 @@ public class MessageEvent extends ListenerAdapter {
                         String command = args[0];
 
                         switch (command.toLowerCase()) {
+                            case "ad":
+                                new ActiveDirectory().activeDirectory(event, args);
+                                break;
                             case "ban":
                                 new Ban().banUser(event, args);
                                 break;
@@ -53,25 +57,17 @@ public class MessageEvent extends ListenerAdapter {
                             case "warn":
                                 new Warn().warnUser(event, args);
                                 break;
-                            case "clearlogs":
+                            case "delrec":
                                 break;
-                            case "delban":
+                            case "modlog":
                                 break;
-                            case "delmute":
-                                break;
-                            case "delwarn":
-                                break;
-                            case "modlogs":
-                                break;
+
                         }
 
                     }
 
-                } else {
+                }  // we may do something here
 
-                    // we may do something here
-
-                }
 
             }
 
