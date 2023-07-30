@@ -1,5 +1,7 @@
 package Main;
 
+import CustomerFunctions.ConfigurationSQLFunctions;
+import CustomerFunctions.PunishmentSQLFunctions;
 import Events.MessageEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -14,6 +16,9 @@ public class Main {
 
     public static HashMap<String, List<Long>> staffRoles = new HashMap<>();
     public static HashMap<String, List<String>> staffCommands = new HashMap<>();
+
+    public static List<String> commands = new ArrayList<>();
+    public static String reportFilePath = "src\\main\\resources\\Reports\\temp.csv";
 
     public static void main(String[] args) {
         JDA jda = JDABuilder.createDefault("MTEzMjY3NzE1ODQ5MDM0NTU1NA.GWeGuB.FPRguDCQCaZvuRgt6ucGGP523LEACZT2yp7P0o")
@@ -44,6 +49,18 @@ public class Main {
         staffCommands.put("Manager", new ArrayList<>());
         staffCommands.put("Developer", new ArrayList<>());
 
+        commands.add("ad");
+        commands.add("delrec");
+        commands.add("modlogs");
+        commands.add("ban");
+        commands.add("mute");
+        commands.add("unban");
+        commands.add("unmute");
+        commands.add("warn");
+        commands.add("kick");
+
+        PunishmentSQLFunctions.createTable();
+        ConfigurationSQLFunctions.createTable();
 
     }
 }

@@ -1,5 +1,6 @@
 package Commands.Punishments;
 
+import CustomerFunctions.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -12,7 +13,7 @@ public class Unban {
 
         if (args.length < 1) {
 
-            event.getChannel().sendMessage("Command Layout: s!unban [user id]").queue();
+            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"unban [user id]").queue();
 
         } else {
 
@@ -49,7 +50,7 @@ public class Unban {
 
                         );
 
-                        TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                        TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                         if (tc != null && tc.canTalk()) {
 
                             tc.sendMessage("```\nUSER UNBANNED " +  "\nUser: " + user.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\n```" ).queue();

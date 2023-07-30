@@ -1,5 +1,6 @@
 package Commands.Punishments;
 
+import CustomerFunctions.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -10,12 +11,12 @@ public class Unmute {
 
     public void unmuteUser(MessageReceivedEvent event, String[] args) {
 
-        String muteRoleId = "1132812396268888116";
+        String muteRoleId = ConfigurationSQLFunctions.getSetting("MuteRoleId");
 
         // Verify text is provided in the arguments
         if (args.length < 1) {
 
-            event.getChannel().sendMessage("Command Layout: s!mute [user id | user mention]]").queue();
+            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"unmute [user id | user mention]]").queue();
 
         } else {
 
@@ -43,7 +44,7 @@ public class Unmute {
                 event.getGuild().removeRoleFromMember(member, r).queue();
                 event.getChannel().sendMessage("Successfully unmuted " + member.getEffectiveName()).queue();
 
-                TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                 if (tc != null && tc.canTalk()) {
 
                     tc.sendMessage("```\nUSER UNMUTED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\n```" ).queue();

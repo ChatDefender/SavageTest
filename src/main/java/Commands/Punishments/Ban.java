@@ -1,5 +1,7 @@
 package Commands.Punishments;
 
+import CustomerFunctions.ConfigurationSQLFunctions;
+import CustomerFunctions.PunishmentSQLFunctions;
 import CustomerFunctions.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -15,7 +17,7 @@ public class Ban {
         // Verify text is provided in the arguments
         if (args.length < 3) {
 
-            event.getChannel().sendMessage("Command Layout: s!ban [user id | user mention] [duration (5m)] [reason]").queue();
+            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"ban [user id | user mention] [duration (5m)] [reason]").queue();
 
         } else {
 
@@ -53,10 +55,12 @@ public class Ban {
 
                 event.getGuild().ban(member.getUser(), 0, TimeUnit.SECONDS).reason(finalReason).queue(
                         success -> event.getChannel().sendMessage("Successfully banned " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue(),
-                        error -> event.getChannel().sendMessage("Failed to " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
+                        error -> event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
                 );
 
-                TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                PunishmentSQLFunctions.insertPunishment("ban", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+
+                TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                 if (tc != null && tc.canTalk()) {
 
                     tc.sendMessage("```\nUSER BANNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\n```" ).queue();
@@ -65,7 +69,6 @@ public class Ban {
 
                     event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
                 }
-
 
             }
 

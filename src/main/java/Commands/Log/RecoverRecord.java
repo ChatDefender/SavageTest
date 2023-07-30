@@ -4,14 +4,14 @@ import CustomerFunctions.ConfigurationSQLFunctions;
 import CustomerFunctions.PunishmentSQLFunctions;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class DeleteRecord {
+public class RecoverRecord {
 
 
-    public void delRec(MessageReceivedEvent event, String[] args) {
+    public void recRec(MessageReceivedEvent event, String[] args) {
 
         if (args.length != 2) {
 
-            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"delrec [#PunishmentLogId]").queue();
+            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"recrec [#PunishmentLogId]").queue();
 
         } else {
 
@@ -19,13 +19,13 @@ public class DeleteRecord {
             if (PunishmentSQLFunctions.doesLogExists(Integer.parseInt(args[1]))) {
 
                 // if it does exist, we can archive it
-                PunishmentSQLFunctions.archiveLog(args[1]);
-                event.getChannel().sendMessage("Deleted record #" + args[1]).queue();
+                PunishmentSQLFunctions.recoverLog(args[1]);
+                event.getChannel().sendMessage("Recovered record #" + args[1]).queue();
 
             } else {
 
                 // if the log does not exist
-                event.getChannel().sendMessage("Could not find record with id number: " + args[1]).queue();
+                event.getChannel().sendMessage("Could not find the record with id number: " + args[1]).queue();
 
 
             }
@@ -33,5 +33,4 @@ public class DeleteRecord {
         }
 
     }
-
 }

@@ -1,5 +1,7 @@
 package Commands.Punishments;
 
+import CustomerFunctions.ConfigurationSQLFunctions;
+import CustomerFunctions.PunishmentSQLFunctions;
 import CustomerFunctions.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -9,15 +11,14 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class Mute {
 
-
     public void muteUser(MessageReceivedEvent event, String[] args) {
 
-        String muteRoleId = "1132812396268888116";
+        String muteRoleId = ConfigurationSQLFunctions.getSetting("MuteRoleId");
 
         // Verify text is provided in the arguments
         if (args.length < 3) {
 
-            event.getChannel().sendMessage("Command Layout: s!mute [user id | user mention] [duration (5m)] [reason]").queue();
+            event.getChannel().sendMessage("Command Layout: "+ConfigurationSQLFunctions.getSetting("Prefix")+"mute [user id | user mention] [duration (5m)] [reason]").queue();
 
         } else {
 
@@ -61,11 +62,16 @@ public class Mute {
                             error -> event.getChannel().sendMessage("Failed to send private message: " + error.getMessage()).queue()
                     );
 
-                    event.getGuild().addRoleToMember(member, r).queue();
-                    event.getChannel().sendMessage("Successfully muted " + member.getEffectiveName()).queue();
+                    event.getGuild().addRoleToMember(member, r).queue(
 
+                            success -> event.getChannel().sendMessage("Successfully muted " + member.getEffectiveName()).queue(),
+                            error -> event.getChannel().sendMessage("Failed to mute " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage()).queue()
 
-                    TextChannel tc = event.getGuild().getTextChannelById("1132823318337179760");
+                    );
+
+                    PunishmentSQLFunctions.insertPunishment("mute", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+
+                    TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                     if (tc != null && tc.canTalk()) {
 
                         tc.sendMessage("```\nUSER MUTED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\n```" ).queue();
