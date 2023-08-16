@@ -2,7 +2,9 @@ package Main;
 
 import CustomerFunctions.ConfigurationSQLFunctions;
 import CustomerFunctions.PunishmentSQLFunctions;
+import Events.BotReady;
 import Events.MessageEvent;
+import Events.RoleDelete;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -30,6 +32,8 @@ public class Main {
         instantiateHashMaps();
 
         jda.addEventListener(new MessageEvent());
+        jda.addEventListener(new RoleDelete());
+        jda.addEventListener(new BotReady());
 
     }
 
@@ -37,7 +41,7 @@ public class Main {
 
         staffRoles.put("TrialMod", new ArrayList<>());
         staffRoles.put("Moderator", new ArrayList<>());
-        staffRoles.put("HeadMod", new ArrayList<>());
+        staffRoles.put("HeadModerator", new ArrayList<>());
         staffRoles.put("Admin", new ArrayList<>());
         staffRoles.put("Manager", new ArrayList<>());
         staffRoles.put("Developer", new ArrayList<>());
@@ -58,6 +62,7 @@ public class Main {
         commands.add("unmute");
         commands.add("warn");
         commands.add("kick");
+        commands.add("permlvl");
 
         PunishmentSQLFunctions.createTable();
         ConfigurationSQLFunctions.createTable();

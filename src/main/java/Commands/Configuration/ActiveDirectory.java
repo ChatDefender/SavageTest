@@ -11,13 +11,15 @@ public class ActiveDirectory {
 
     public void activeDirectory(MessageReceivedEvent event, String[] args) {
 
-        String staff = args[1].toLowerCase();
 
-        if (args.length < 3 && !staff.equalsIgnoreCase("view")) {
+
+        if (args.length < 3 && !args[1].equalsIgnoreCase("view")) {
 
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"ad [tm | m | hm | a | man | d] [ar | rr | ac | rc] [{role-id | @role} | {command name}]").queue();
 
         } else {
+
+            String staff = args[1].toLowerCase();
 
             String action = args[2].replace("-", "").toLowerCase();
 
@@ -55,7 +57,7 @@ public class ActiveDirectory {
                     break;
                 default:
                     shouldContinue = false;
-                    event.getChannel().sendMessage("That is not a valid tag for staff. The valid tags are as follows: \ntm - TrialMod\nm - Moderator\nhm - HeadMod\na - Admin\nman - Manager\nd - Developer").queue();
+                    event.getChannel().sendMessage("That is not a valid tag for staff. The valid tags are as follows: \ntm - TrialMod\nm - Moderator\nhm - HeadModerator\na - Admin\nman - Manager\nd - Developer").queue();
             }
 
 
@@ -180,7 +182,7 @@ public class ActiveDirectory {
 
                             }
 
-                            sb.deleteCharAt(sb.length());
+                            sb.deleteCharAt(sb.length()-1);
 
                             event.getChannel().sendMessage("The command does not exists.\nThe available commands are as follows: " + sb).queue();
 
@@ -324,17 +326,13 @@ public class ActiveDirectory {
 
         AtomicReference<String> group = new AtomicReference<>("");
 
-        hm.forEach((key, value) -> {
+        hm.forEach((key, value) -> value.forEach(l -> {
 
-            value.forEach(l -> {
+                if (Objects.equals(l, roleId) && !staff.equals(key)) {
+                    group.set(key);
+                }
 
-                    if (Objects.equals(l, roleId) && !staff.equals(key)) {
-                        group.set(key);
-                    }
-
-                });
-
-            }
+            })
 
         );
 
@@ -346,17 +344,13 @@ public class ActiveDirectory {
 
         AtomicReference<String> group = new AtomicReference<>("");
 
-        hm.forEach((key, value) -> {
+        hm.forEach((key, value) -> value.forEach(l -> {
 
-                    value.forEach(l -> {
+            if (command.equalsIgnoreCase(l) && !staff.equals(key)) {
+                group.set(key);
+            }
 
-                        if (command.equalsIgnoreCase(l) && !staff.equals(key)) {
-                            group.set(key);
-                        }
-
-                    });
-
-                }
+        })
 
         );
 

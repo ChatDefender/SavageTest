@@ -4,12 +4,10 @@ import Commands.Configuration.ActiveDirectory;
 import Commands.Configuration.ConfigureBot;
 import Commands.Punishments.*;
 import Commands.Log.*;
+import Commands.User.PermissionLevel;
 import CustomerFunctions.ConfigurationSQLFunctions;
-import Main.Main;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
+import CustomerFunctions.functions;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -39,7 +37,7 @@ public class MessageEvent extends ListenerAdapter {
                     String[] args = commandLine.split("\\s+");
                     String command = args[0];
 
-                    if (hasPermissions(event, command)) {
+                    if (functions.getAuthorPermLevel(event) >= functions.getCommandPermLvl(command)) {
 
                         switch (command.toLowerCase()) {
                             case "ad":
@@ -77,41 +75,8 @@ public class MessageEvent extends ListenerAdapter {
                                 break;
                             case "config":
                                 new ConfigureBot().config(event, args);
-
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-    public static boolean hasPermissions(MessageReceivedEvent event, String command) {
-
-        Member m = event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete();
-
-        boolean hasPerm = false;
-        boolean isStaff = false;
-        String staff = null;
-
-        for (String s : Main.staffRoles.keySet()) {
-
-            for (Long l : Main.staffRoles.get(s)) {
-
-                if (m.getRoles().isEmpty()) {
-
-                    for (Role r : m.getRoles()) {
-
-                        if (r.getIdLong() == l) {
-
-                            isStaff = true;
-                            staff = s;
-                            break;
+                            case "permlvl":
+                                new PermissionLevel().permlvl(event, args);
 
                         }
 
@@ -122,29 +87,6 @@ public class MessageEvent extends ListenerAdapter {
             }
 
         }
-
-        if (isStaff) {
-
-            for (String c : Main.staffCommands.get(staff)) {
-
-                if (command.equalsIgnoreCase(c)) {
-
-                    hasPerm = true;
-                    break;
-
-                }
-
-            }
-
-        }
-
-        if (event.getAuthor().getId().equals("286270602820452353") || event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete().hasPermission(Permission.ADMINISTRATOR)) {
-
-            hasPerm = true;
-
-        }
-
-        return hasPerm;
 
     }
 

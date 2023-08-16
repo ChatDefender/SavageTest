@@ -2,6 +2,7 @@ package Commands.Punishments;
 
 import CustomerFunctions.ConfigurationSQLFunctions;
 import CustomerFunctions.PunishmentSQLFunctions;
+import CustomerFunctions.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -28,6 +29,10 @@ public class Kick {
             if (member.isOwner()) {
 
                 event.getChannel().sendMessage("I cannot kick the owner of the server.").queue();
+
+            } else if (functions.getMentionedUserPermLevel(event, userId) >= functions.getAuthorPermLevel(event)) {
+
+                event.getChannel().sendMessage("I cannot kick that user as they have the same permission level as you or greater.").queue();
 
             } else {
 

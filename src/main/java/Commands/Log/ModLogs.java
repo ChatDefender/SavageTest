@@ -18,7 +18,7 @@ public class ModLogs {
 
     public void getLogs(MessageReceivedEvent event, String[] args) {
 
-        if (args.length < 4) {
+        if (args.length < 3) {
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]\nExplanation: Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries").queue();
         } else {
 

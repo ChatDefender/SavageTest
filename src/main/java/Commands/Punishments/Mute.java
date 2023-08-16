@@ -41,6 +41,10 @@ public class Mute {
 
                     event.getChannel().sendMessage("I cannot mute the owner of the server.").queue();
 
+                } else if (functions.getMentionedUserPermLevel(event, userId) >= functions.getAuthorPermLevel(event)) {
+
+                    event.getChannel().sendMessage("I cannot mute that user as they have the same permission level as you or greater.").queue();
+
                 } else {
 
                     // Convert the duration argument into ms.
