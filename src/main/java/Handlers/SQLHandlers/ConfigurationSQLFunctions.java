@@ -1,8 +1,8 @@
-package CustomerFunctions;
+package Handlers.SQLHandlers;
 
 public class ConfigurationSQLFunctions {
 
-    static String url = "jdbc:sqlite:src\\main\\resources\\settings.db";
+    static String url = "jdbc:sqlite:settings.db";
 
     public static void createTable() {
 

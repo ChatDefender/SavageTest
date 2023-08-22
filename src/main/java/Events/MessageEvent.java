@@ -1,12 +1,8 @@
 package Events;
 
-import Commands.Configuration.ActiveDirectory;
-import Commands.Configuration.ConfigureBot;
-import Commands.Punishments.*;
-import Commands.Log.*;
-import Commands.User.PermissionLevel;
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.functions;
+import Handlers.CommandHandler;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Main.functions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -33,52 +29,16 @@ public class MessageEvent extends ListenerAdapter {
                 // Triggers the command filtration section.
                 if (message.getContentRaw().startsWith(prefix)) {
 
+                    // Get the command and args
                     String commandLine = message.getContentRaw().replace(prefix, "");
                     String[] args = commandLine.split("\\s+");
                     String command = args[0];
 
+                    // If the user has permission to run it, they can
                     if (functions.getAuthorPermLevel(event) >= functions.getCommandPermLvl(command)) {
 
-                        switch (command.toLowerCase()) {
-                            case "ad":
-                                new ActiveDirectory().activeDirectory(event, args);
-                                break;
-                            case "ban":
-                                new Ban().banUser(event, args);
-                                break;
-                            case "mute":
-                                new Mute().muteUser(event, args);
-                                break;
-                            case "unban":
-                                new Unban().unbanUser(event, args);
-                                break;
-                            case "unmute":
-                                new Unmute().unmuteUser(event, args);
-                                break;
-                            case "warn":
-                                new Warn().warnUser(event, args);
-                                break;
-                            case "kick":
-                                new Kick().kickUser(event, args);
-                                break;
-                            case "delrec":
-                                new DeleteRecord().delRec(event, args);
-                                break;
-                            case "recrec":
-                                new RecoverRecord().recRec(event, args);
-                                break;
-                            case "clearlog":
-                                new ClearLogs().deleteLogs(event, args);
-                                break;
-                            case "modlog":
-                                new ModLogs().getLogs(event, args);
-                                break;
-                            case "config":
-                                new ConfigureBot().config(event, args);
-                            case "permlvl":
-                                new PermissionLevel().permlvl(event, args);
-
-                        }
+                        // Run the command
+                        CommandHandler.executeCommand(command.toLowerCase(), event, args);
 
                     }
 

@@ -1,15 +1,21 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
-public class Unban {
+public class Unban extends BaseCommand {
 
-    public void unbanUser(MessageReceivedEvent event, String[] args) {
+    public Unban() {
+        super("unban", new String[] {}, "unban [userId]", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args)  {
 
         if (args.length < 1) {
 

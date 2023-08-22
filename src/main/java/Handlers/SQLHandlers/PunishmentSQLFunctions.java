@@ -1,13 +1,9 @@
-package CustomerFunctions;
+package Handlers.SQLHandlers;
 
-import CustomerFunctions.BasicSQLFunctions;
-import net.dv8tion.jda.api.utils.FileUpload;
-
-import java.io.File;
 import java.sql.*;
 public class PunishmentSQLFunctions {
 
-    static String url = "jdbc:sqlite:src\\main\\resources\\punishments.db";
+    static String url = "jdbc:sqlite:punishments.db";
 
     public static void createTable() {
 

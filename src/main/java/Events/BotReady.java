@@ -1,14 +1,12 @@
 package Events;
 
+import Handlers.MongoDBHandler.MongoDBHandler;
+import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import Main.*;
+import java.util.*;
 
 public class BotReady extends ListenerAdapter {
 
@@ -17,17 +15,45 @@ public class BotReady extends ListenerAdapter {
 
         List<Role> roles = Objects.requireNonNull(event.getJDA().getGuildById("1132678375660585061")).getRoles();
 
-        List<Long> roleIds = new ArrayList<>();
+        List<String> roleIds = new ArrayList<>();
 
         for (Role r : roles) {
 
-            roleIds.add(Long.parseLong(r.getId()));
+            roleIds.add(r.getId());
 
         }
 
-        Main.staffRoles.entrySet().removeIf(entry ->
-                entry.getValue().removeIf(roleId -> !roleIds.contains(roleId))
-        );
+        MongoDBHandler.getGroups().forEach(g -> {
+
+            MongoDBHandler.getArrValues("Roles", g).forEach(role -> {
+
+                if (!roleIds.contains(role)) {
+
+                    MongoDBHandler.removeFromActiveDirectory("Roles", g, role);
+
+                }
+
+            });
+
+        });
+
+        startSchedule(event);
+
+    }
+
+    private void startSchedule(ReadyEvent event) {
+
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                TimedPunishmentsSQLFunctions.filter(event);
+            }
+        };
+
+        // Schedule the task to run every second (1000 milliseconds)
+        timer.scheduleAtFixedRate(task, 0, 1000);
 
     }
 

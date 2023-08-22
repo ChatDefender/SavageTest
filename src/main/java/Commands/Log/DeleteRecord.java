@@ -1,13 +1,19 @@
 package Commands.Log;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class DeleteRecord {
+public class DeleteRecord extends BaseCommand {
 
 
-    public void delRec(MessageReceivedEvent event, String[] args) {
+    public DeleteRecord() {
+        super("deleterecord", new String[]{"delrec"}, "delrec [#PunishmentLogId]", "Deletes a record from the punishment logs database", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length != 2) {
 

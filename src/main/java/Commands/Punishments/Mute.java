@@ -1,17 +1,23 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
-import CustomerFunctions.functions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
+import Main.functions;
+import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class Mute {
+public class Mute extends BaseCommand {
 
-    public void muteUser(MessageReceivedEvent event, String[] args) {
+    public Mute() {
+        super("mute", new String[] {}, "mute [@user | userId] [duration] [reason]", "Mutes a specified user for a specified duration", "Used when someone is being naughty in the chatty, or tickles rose on the wrong day");
+    }
+
+    public void run(MessageReceivedEvent event, String[] args) {
 
         String muteRoleId = ConfigurationSQLFunctions.getSetting("MuteRoleId");
 
@@ -74,6 +80,13 @@ public class Mute {
                     );
 
                     PunishmentSQLFunctions.insertPunishment("mute", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+
+                    if (timeInMs != -1) {
+
+                        long endTime = System.currentTimeMillis() + timeInMs;
+                        TimedPunishmentsSQLFunctions.insertTime("mute", event.getGuild().getId(), userId, ""+endTime);
+
+                    }
 
                     TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                     if (tc != null && tc.canTalk()) {

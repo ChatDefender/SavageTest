@@ -1,6 +1,9 @@
-package CustomerFunctions;
+package Main;
 
-import Main.Main;
+import static Handlers.MongoDBHandler.MongoDBHandler.*;
+
+import Handlers.MongoDBHandler.MongoDBHandler;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -8,6 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class functions {
 
@@ -37,7 +41,7 @@ public class functions {
             case "yr":
                 return timeValue * 365L * 24L * 60L * 60L * 1000L;
             default:
-                return -2;
+                return -1;
         }
 
     }
@@ -45,21 +49,25 @@ public class functions {
     public static int getAuthorPermLevel(MessageReceivedEvent event) {
 
         if (event.getAuthor().getId().equals("286270602820452353"))
-            return 10;
+            return 9999;
 
-        String staff = "";
+        if (event.getMember().hasPermission(Permission.ADMINISTRATOR))
+            return 15;
+
+        int permlvl = 0;
 
         // Firstly, we want to see if the user's role exists in the database
         Member m = event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete();
         List<Role> lr = m.getRoles();
 
-        for (String s : Main.staffRoles.keySet()) {
+        for (String s : getGroups()) {
 
             for (Role r : lr) {
 
-                if (Main.staffRoles.get(s).contains(Long.parseLong(r.getId()))) {
+                if (getArrValues("Roles", s).contains(r.getId())) {
 
-                    staff = s;
+                    permlvl = MongoDBHandler.getPermissionLevel("Roles", s);
+
                     break;
 
                 }
@@ -68,76 +76,52 @@ public class functions {
 
         }
 
-        // if it does, assign them a permission level. If not, return 0.
-        switch (staff) {
-            case "TrialMod":
-                return 1;
-            case "Moderator":
-                return 2;
-            case "HeadModerator":
-                return 3;
-            case "Admin":
-                return 4;
-            case "Manager":
-                return 5;
-            case "Developer":
-                return 6;
-        }
-        return 0;
+        return permlvl;
 
     }
 
     public static int getCommandPermLvl(String cmd) {
 
-        String staff = "";
+        // we set perm lvl so high for commands because we do not want people abusing them
+        int permlvl = 14;
 
-        for (String s : Main.staffCommands.keySet()) {
+        for (String s : getGroups()) {
 
-            if (Main.staffCommands.get(s).contains(cmd)) {
+            if (getArrValues("Commands", s).contains(cmd)) {
 
-                staff = s;
+                permlvl = getPermissionLevel("Commands", s);
                 break;
 
             }
 
         }
 
-        switch (staff) {
-            case "TrialMod":
-                return 1;
-            case "Moderator":
-                return 2;
-            case "HeadModerator":
-                return 3;
-            case "Admin":
-                return 4;
-            case "Manager":
-                return 5;
-            case "Developer":
-                return 6;
-        }
-        return 0;
+        return permlvl;
 
     }
 
     public static int getMentionedUserPermLevel(MessageReceivedEvent event, String userId) {
 
         if (userId.equals("286270602820452353"))
-            return 10;
+            return 9999;
 
-        String staff = "";
+        if (event.getGuild().retrieveMemberById(userId).complete().hasPermission(Permission.ADMINISTRATOR))
+            return 15;
+
+        int permlvl = 0;
 
         // Firstly, we want to see if the user's role exists in the database
         Member m = event.getGuild().retrieveMemberById(userId).complete();
         List<Role> lr = m.getRoles();
 
-        for (String s : Main.staffRoles.keySet()) {
+        for (String s : getGroups()) {
 
             for (Role r : lr) {
 
-                if (Main.staffRoles.get(s).contains(Long.parseLong(r.getId()))) {
+                if (getArrValues("Roles", s).contains(r.getId())) {
 
-                    staff = s;
+                    permlvl = MongoDBHandler.getPermissionLevel("Roles", s);
+
                     break;
 
                 }
@@ -146,22 +130,7 @@ public class functions {
 
         }
 
-        // if it does, assign them a permission level. If not, return 0.
-        switch (staff) {
-            case "TrialMod":
-                return 1;
-            case "Moderator":
-                return 2;
-            case "HeadModerator":
-                return 3;
-            case "Admin":
-                return 4;
-            case "Manager":
-                return 5;
-            case "Developer":
-                return 6;
-        }
-        return 0;
+        return permlvl;
     }
 
 }

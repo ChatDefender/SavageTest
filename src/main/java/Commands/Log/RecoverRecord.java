@@ -1,13 +1,18 @@
 package Commands.Log;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class RecoverRecord {
+public class RecoverRecord extends BaseCommand {
 
 
-    public void recRec(MessageReceivedEvent event, String[] args) {
+    public RecoverRecord() {
+        super("recoverrecord", new String[] {"recrec"}, "recrec [#PunishmentLogId]", "Recovers a deleted record from the punishment log database", "");
+    }
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length != 2) {
 

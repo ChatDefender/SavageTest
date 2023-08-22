@@ -1,12 +1,18 @@
 package Commands.Log;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class ClearLogs {
+public class ClearLogs extends BaseCommand {
 
-    public void deleteLogs(MessageReceivedEvent event, String[] args) {
+    public ClearLogs() {
+        super("clearlogs", new String[] {"clearlog"}, "clearlogs [@user | user_id]", "Can only bulk delete records from users. Cannot bulk delete staff records.", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length != 2) {
 

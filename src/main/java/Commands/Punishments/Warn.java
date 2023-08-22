@@ -1,16 +1,22 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
-import CustomerFunctions.functions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
+import Main.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class Warn {
+public class Warn extends BaseCommand {
 
-    public void warnUser(MessageReceivedEvent event, String[] args) {
+    public Warn() {
+        super("warn", new String[] {}, "warn [@user | userId] [reason]", "Warns a user who is misbehaving in the discord.", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length < 2) {
 

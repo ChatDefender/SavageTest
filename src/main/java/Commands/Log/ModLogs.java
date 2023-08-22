@@ -1,7 +1,8 @@
 package Commands.Log;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import Main.*;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -14,9 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ModLogs {
+public class ModLogs extends BaseCommand {
 
-    public void getLogs(MessageReceivedEvent event, String[] args) {
+
+    public ModLogs() {
+        super("modlogs", new String[] {"modlog"}, "modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]", "Retrieves records from the punishment log database.", "Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length < 3) {
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]\nExplanation: Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries").queue();

@@ -1,16 +1,13 @@
-package CustomerFunctions;
+package Handlers.SQLHandlers;
 
 import Main.Main;
 import dnl.utils.text.table.TextTable;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BasicSQLFunctions {

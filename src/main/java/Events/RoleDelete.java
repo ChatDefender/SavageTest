@@ -1,6 +1,6 @@
 package Events;
 
-import Main.*;
+import Handlers.MongoDBHandler.MongoDBHandler;
 import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -9,28 +9,17 @@ public class RoleDelete  extends ListenerAdapter {
     @Override
     public void onRoleDelete(RoleDeleteEvent event) {
 
-        Long roleId = Long.parseLong(event.getRole().getId());
+        String roleId = event.getRole().getId();
 
-        String staff = null;
-        boolean delete = false;
+        MongoDBHandler.getGroups().forEach(g -> {
 
-        for (String s : Main.staffRoles.keySet()) {
+            if (MongoDBHandler.getArrValues("Roles", g).contains(roleId)) {
 
-            if (Main.staffRoles.get(s).contains(roleId)) {
-
-                staff = s;
-                delete = true;
+                MongoDBHandler.removeFromActiveDirectory("Roles", g, roleId);
 
             }
 
-        }
-
-        if (delete) {
-
-            Main.staffRoles.get(staff).remove(roleId);
-
-        }
-
+        });
 
     }
 

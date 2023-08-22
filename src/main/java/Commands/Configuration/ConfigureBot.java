@@ -1,11 +1,19 @@
 package Commands.Configuration;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class ConfigureBot {
-    public void config(MessageReceivedEvent event, String[] args) {
+public class ConfigureBot extends BaseCommand {
+
+
+    public ConfigureBot() {
+        super("configurebot", new String[] {"config", "configbot"}, "config [setting] [value]", "Current Available Settings: prefix, punishmentlogs, mutedrole", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         if (args.length < 2) {
 

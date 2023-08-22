@@ -1,16 +1,22 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
-import CustomerFunctions.functions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
+import Main.functions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class Kick {
-    public void kickUser(MessageReceivedEvent event, String[] args) {
+public class Kick extends BaseCommand {
+    public Kick() {
+        super("kick", new String[] {"remove", "buhbye"}, "kick [@user | userId] [reason]", "Removes a member from the server.", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         // Verify text is provided in the arguments
         if (args.length < 2) {

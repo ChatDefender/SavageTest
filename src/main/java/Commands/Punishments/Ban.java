@@ -1,8 +1,10 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
-import CustomerFunctions.PunishmentSQLFunctions;
-import CustomerFunctions.functions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.PunishmentSQLFunctions;
+import Main.functions;
+import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -10,9 +12,14 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class Ban {
+public class Ban extends BaseCommand {
 
-    public void banUser(MessageReceivedEvent event, String[] args) {
+    public Ban() {
+        super("ban", new String[] {"banish", "banana", "bananahammer"}, "ban [@user | userId] [duration] [reason]", "Bans a user from the discord server", "");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
 
         // Verify text is provided in the arguments
         if (args.length < 3) {
@@ -63,6 +70,12 @@ public class Ban {
                 );
 
                 PunishmentSQLFunctions.insertPunishment("ban", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+                if (timeInMs != -1) {
+
+                    long endTime = System.currentTimeMillis() + timeInMs;
+                    TimedPunishmentsSQLFunctions.insertTime("ban", event.getGuild().getId(), userId, ""+endTime);
+
+                }
 
                 TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                 if (tc != null && tc.canTalk()) {

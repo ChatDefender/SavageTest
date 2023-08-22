@@ -1,16 +1,22 @@
 package Commands.Punishments;
 
-import CustomerFunctions.ConfigurationSQLFunctions;
+import Commands.BaseCommand;
+import Handlers.SQLHandlers.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class Unmute {
+public class Unmute extends BaseCommand {
 
-    public void unmuteUser(MessageReceivedEvent event, String[] args) {
 
+    public Unmute() {
+        super("unmute", new String[] {}, "unmute [@user | userId]", "Unmutes a user", "Used when someone finally started acting right, removed the permanent mute, or other reasons");
+    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
         String muteRoleId = ConfigurationSQLFunctions.getSetting("MuteRoleId");
 
         // Verify text is provided in the arguments
@@ -58,7 +64,6 @@ public class Unmute {
             }
 
         }
-
     }
 
 }
