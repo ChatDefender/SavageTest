@@ -166,15 +166,13 @@ public class MongoDBHandler {
                 // Close the connection once we are done.
                 mongoClient.close();
 
-                return valuesReturned;
-
             } catch (MongoException e) {
                 e.printStackTrace();
             }
 
         }
 
-        return new ArrayList<>();
+        return valuesReturned;
     }
 
     // if it exists in another group, we want to return the group it is in
@@ -255,7 +253,7 @@ public class MongoDBHandler {
                 MongoCollection<Document> collection = database.getCollection("Roles");
 
                 // now find the document to get the groups
-                Document document = collection.find(new Document("_id", documentIdForRoles)).first();
+                Document document = collection.find(eq("_id", new ObjectId(documentIdForRoles))).first();
 
                 // verify the document exists
                 if (document != null) {
@@ -463,9 +461,15 @@ public class MongoDBHandler {
                 // get the values from the document
                 Document fields = collection.find(eq("_id", new ObjectId(collectionName.equals("Roles") ? documentIdForRoles : documentIdForCommands))).first();
 
-                if (fields != null) {
+                if (fields != null && fields.containsKey(group)) {
 
-                    permLvl = fields.getInteger(group + ".permlvl");
+                    Document value = (Document) fields.get(group);
+
+                    if (value.containsKey("permlvl")) {
+
+                        permLvl = value.get("permlvl", Integer.class);
+
+                    }
 
                 }
 

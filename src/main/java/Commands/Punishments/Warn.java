@@ -58,12 +58,12 @@ public class Warn extends BaseCommand {
 
                 event.getChannel().sendMessage("Successfully warned " + member.getEffectiveName()).queue();
 
-                PunishmentSQLFunctions.insertPunishment("warn", member.getId(), event.getAuthor().getId(), String.valueOf(0), finalReason);
+                int id = PunishmentSQLFunctions.insertPunishment("warn", member.getId(), event.getAuthor().getId(), String.valueOf(0), finalReason);
 
                 TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                 if (tc != null && tc.canTalk()) {
 
-                    tc.sendMessage("```\nUSER WARNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nReason: " + finalReason + "\n```" ).queue();
+                    tc.sendMessage("```\nUSER WARNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nReason: " + finalReason + "\nPunishmentId: "+id+"```" ).queue();
 
                 } else {
 

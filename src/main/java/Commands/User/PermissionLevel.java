@@ -12,7 +12,18 @@ public class PermissionLevel extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
-        event.getChannel().sendMessage("Your permission level is: " + functions.getAuthorPermLevel(event)).queue();
+        if (args.length == 1) {
+
+            event.getChannel().sendMessage("Your permission level is: " + functions.getAuthorPermLevel(event)).queue();
+
+        } else {
+
+            String userId = args[1].replace("<@", "").replace(">", "");
+
+            event.getChannel().sendMessage("the perm lvl for the mentioned user is : " + functions.getMentionedUserPermLevel(event, userId)).queue();
+
+
+        }
 
     }
 

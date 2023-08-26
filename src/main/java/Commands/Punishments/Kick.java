@@ -62,13 +62,13 @@ public class Kick extends BaseCommand {
                         error -> event.getChannel().sendMessage("Failed to kick " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
                 );
 
-                PunishmentSQLFunctions.insertPunishment("kick", member.getId(), event.getAuthor().getId(), String.valueOf(0), finalReason);
+                int id = PunishmentSQLFunctions.insertPunishment("kick", member.getId(), event.getAuthor().getId(), String.valueOf(0), finalReason);
 
                 TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
 
                 if (tc != null && tc.canTalk()) {
 
-                    tc.sendMessage("```\nUSER KICKED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nReason: " + finalReason + "\n```" ).queue();
+                    tc.sendMessage("```\nUSER KICKED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nReason: " + finalReason + "\nPunishmentId: "+id+"```" ).queue();
 
                 } else {
 

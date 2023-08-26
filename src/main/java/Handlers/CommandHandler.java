@@ -8,7 +8,7 @@ import java.util.*;
 public class CommandHandler {
 
     // Simulated map of command names to command instances
-    private static Map<String, BaseCommand> commandMap = new HashMap<>();
+    private static final Map<String, BaseCommand> commandMap = new HashMap<>();
 
     public static void registerCommand(BaseCommand command) {
         commandMap.put(command.getName(), command);

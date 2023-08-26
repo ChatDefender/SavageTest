@@ -1,6 +1,5 @@
 package Main;
 
-import Commands.BaseCommand;
 import Commands.Configuration.ActiveDirectory;
 import Commands.Configuration.ConfigureBot;
 import Commands.Log.ClearLogs;
@@ -8,6 +7,7 @@ import Commands.Log.DeleteRecord;
 import Commands.Log.ModLogs;
 import Commands.Log.RecoverRecord;
 import Commands.Punishments.*;
+import Commands.User.Aboose;
 import Commands.User.PermissionLevel;
 import Events.MemberJoin;
 import Handlers.CommandHandler;
@@ -71,10 +71,8 @@ public class Main {
         CommandHandler.registerCommand(new Unmute());
         CommandHandler.registerCommand(new Warn());
         CommandHandler.registerCommand(new PermissionLevel());
+        CommandHandler.registerCommand(new Aboose());
 
     }
-
-
-
 
 }

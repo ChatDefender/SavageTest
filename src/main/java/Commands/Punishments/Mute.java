@@ -79,7 +79,7 @@ public class Mute extends BaseCommand {
 
                     );
 
-                    PunishmentSQLFunctions.insertPunishment("mute", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+                    int id = PunishmentSQLFunctions.insertPunishment("mute", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
 
                     if (timeInMs != -1) {
 
@@ -91,7 +91,7 @@ public class Mute extends BaseCommand {
                     TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                     if (tc != null && tc.canTalk()) {
 
-                        tc.sendMessage("```\nUSER MUTED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\n```" ).queue();
+                        tc.sendMessage("```\nUSER MUTED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\nPunishmentId: "+id+"```" ).queue();
 
                     } else {
 

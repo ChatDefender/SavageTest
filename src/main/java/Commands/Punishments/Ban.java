@@ -69,7 +69,7 @@ public class Ban extends BaseCommand {
                         error -> event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
                 );
 
-                PunishmentSQLFunctions.insertPunishment("ban", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
+                int id = PunishmentSQLFunctions.insertPunishment("ban", member.getId(), event.getAuthor().getId(), String.valueOf(timeInMs), finalReason);
                 if (timeInMs != -1) {
 
                     long endTime = System.currentTimeMillis() + timeInMs;
@@ -80,7 +80,7 @@ public class Ban extends BaseCommand {
                 TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
                 if (tc != null && tc.canTalk()) {
 
-                    tc.sendMessage("```\nUSER BANNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\n```" ).queue();
+                    tc.sendMessage("```\nUSER BANNED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nDuration: " +duration + "\nReason: " + finalReason + "\nPunishmentId: "+id+"```" ).queue();
 
                 } else {
 
@@ -93,7 +93,5 @@ public class Ban extends BaseCommand {
 
     }
 
-
 }
-
 

@@ -21,12 +21,32 @@ public class PunishmentSQLFunctions {
 
     }
 
-    public static void insertPunishment(String punType, String userId, String staffId, String duration, String reason) {
+    public static int insertPunishment(String punType, String userId, String staffId, String duration, String reason) {
 
         String sql = "INSERT INTO PunishmentLogs (PunishmentType, UserId, StaffId, Duration, Reason) VALUES ('"+punType+"', '"+userId+"', '"+staffId+"', '"+duration+"', '"+reason.replace("\"", "\\\"").replace("'", "\\'")+"')";
 
         BasicSQLFunctions.runStmt(url, sql);
 
+        String SQL = "SELECT * FROM PunishmentLogs WHERE PunishmentType = '"+punType+"' AND UserId = '"+userId+"' AND StaffId = '"+staffId+"' AND Duration = '"+duration+"' AND Reason = '"+reason.replace("\"", "\\\"").replace("'", "\\'")+"'";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             Statement statement = connection.createStatement()) {
+
+            // Perform the query to check if the row exists based on the primary key
+            ResultSet resultSet = statement.executeQuery(SQL);
+
+            // Check if the ResultSet contains any rows
+            while (resultSet.next()) {
+
+                return Integer.parseInt(resultSet.getString("PunishmentId"));
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     public static boolean doesLogExists(int primaryKey) {

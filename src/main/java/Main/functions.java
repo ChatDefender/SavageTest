@@ -74,6 +74,8 @@ public class functions {
 
             }
 
+            break;
+
         }
 
         return permlvl;
@@ -84,6 +86,7 @@ public class functions {
 
         // we set perm lvl so high for commands because we do not want people abusing them
         int permlvl = 14;
+
 
         for (String s : getGroups()) {
 
@@ -108,8 +111,6 @@ public class functions {
         if (event.getGuild().retrieveMemberById(userId).complete().hasPermission(Permission.ADMINISTRATOR))
             return 15;
 
-        int permlvl = 0;
-
         // Firstly, we want to see if the user's role exists in the database
         Member m = event.getGuild().retrieveMemberById(userId).complete();
         List<Role> lr = m.getRoles();
@@ -120,9 +121,7 @@ public class functions {
 
                 if (getArrValues("Roles", s).contains(r.getId())) {
 
-                    permlvl = MongoDBHandler.getPermissionLevel("Roles", s);
-
-                    break;
+                    return MongoDBHandler.getPermissionLevel("Roles", s);
 
                 }
 
@@ -130,7 +129,7 @@ public class functions {
 
         }
 
-        return permlvl;
+        return 0;
     }
 
 }
