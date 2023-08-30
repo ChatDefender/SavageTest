@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class Warn extends BaseCommand {
 
     public Warn() {
-        super("warn", new String[] {}, "warn [@user | userId] [reason]", "Warns a user who is misbehaving in the discord.", "");
+        super("warn", new String[] {}, "warn [@user | userId] [reason]", "Warns a user who is misbehaving in the discord.", "", 2);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class ConfigureBot extends BaseCommand {
 
 
     public ConfigureBot() {
-        super("configurebot", new String[] {"config", "configbot"}, "config [setting] [value]", "Current Available Settings: prefix, punishmentlogs, mutedrole", "");
+        super("configurebot", new String[] {"config", "configbot"}, "config [setting] [value]", "Current Available Settings: prefix, punishmentlogs, mutedrole", "", 8);
     }
 
     @Override

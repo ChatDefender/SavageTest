@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class ClearLogs extends BaseCommand {
 
     public ClearLogs() {
-        super("clearlogs", new String[] {"clearlog"}, "clearlogs [@user | user_id]", "Can only bulk delete records from users. Cannot bulk delete staff records.", "");
+        super("clearlogs", new String[] {"clearlog"}, "clearlogs [@user | user_id]", "Can only bulk delete records from users. Cannot bulk delete staff records.", "", 5);
     }
 
     @Override

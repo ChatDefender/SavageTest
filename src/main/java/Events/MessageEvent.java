@@ -13,6 +13,9 @@ public class MessageEvent extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
+        long sysTime = System.currentTimeMillis();
+        System.out.println("Message processioning...");
+
         // Classifiers
         Message message = event.getMessage();
         User author = event.getAuthor();
@@ -47,6 +50,9 @@ public class MessageEvent extends ListenerAdapter {
             }
 
         }
+
+        long timeTook = System.currentTimeMillis() - sysTime;
+        System.out.println("Message processed. Took: " + timeTook + " ms.");
 
     }
 

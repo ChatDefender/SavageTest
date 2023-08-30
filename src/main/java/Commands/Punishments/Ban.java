@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class Ban extends BaseCommand {
 
     public Ban() {
-        super("ban", new String[] {"banish", "banana", "bananahammer"}, "ban [@user | userId] [duration] [reason]", "Bans a user from the discord server", "");
+        super("ban", new String[] {"banish", "banana", "bananahammer"}, "ban [@user | userId] [duration] [reason]", "Bans a user from the discord server", "", 2);
     }
 
     @Override

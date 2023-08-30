@@ -13,7 +13,7 @@ import static Handlers.CommandHandler.doesCommandExist;
 public class ActiveDirectory extends BaseCommand {
 
     public ActiveDirectory() {
-        super("activedirectory", new String[] {"activedir", "dir", "ad"}, "ad [action] [group] [role/command]", "Actions: addGroup, removeGroup, addCommand, removeCommand, addRole, removeRole\nGroups: "+ String.join(", ", MongoDBHandler.getGroups()) +"\nCommands:"+ CommandHandler.getCommands().stream().map(command -> "`" + command + "`").collect(Collectors.joining(", ")), "");
+        super("activedirectory", new String[] {"activedir", "dir", "ad"}, "ad [action] [group] [role/command]", "Actions: addGroup, removeGroup, addCommand, removeCommand, addRole, removeRole\nGroups: "+ String.join(", ", MongoDBHandler.getGroups()) +"\nCommands:"+ CommandHandler.getCommands().stream().map(command -> "`" + command + "`").collect(Collectors.joining(", ")), "", 8);
     }
 
     @Override

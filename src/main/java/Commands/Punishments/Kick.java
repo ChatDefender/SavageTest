@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class Kick extends BaseCommand {
     public Kick() {
-        super("kick", new String[] {"remove", "buhbye"}, "kick [@user | userId] [reason]", "Removes a member from the server.", "");
+        super("kick", new String[] {"remove", "buhbye"}, "kick [@user | userId] [reason]", "Removes a member from the server.", "", 2);
     }
 
     @Override

@@ -2,6 +2,7 @@ package Main;
 
 import static Handlers.MongoDBHandler.MongoDBHandler.*;
 
+import Handlers.CommandHandler;
 import Handlers.MongoDBHandler.MongoDBHandler;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class functions {
 
@@ -48,80 +48,39 @@ public class functions {
 
     public static int getAuthorPermLevel(MessageReceivedEvent event) {
 
-        if (event.getAuthor().getId().equals("286270602820452353"))
-            return 9999;
-
-        if (event.getMember().hasPermission(Permission.ADMINISTRATOR))
-            return 15;
-
-        int permlvl = 0;
-
-        // Firstly, we want to see if the user's role exists in the database
-        Member m = event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete();
-        List<Role> lr = m.getRoles();
-
-        for (String s : getGroups()) {
-
-            for (Role r : lr) {
-
-                if (getArrValues("Roles", s).contains(r.getId())) {
-
-                    permlvl = MongoDBHandler.getPermissionLevel("Roles", s);
-
-                    break;
-
-                }
-
-            }
-
-            break;
-
-        }
-
-        return permlvl;
-
-    }
-
-    public static int getCommandPermLvl(String cmd) {
-
-        // we set perm lvl so high for commands because we do not want people abusing them
-        int permlvl = 14;
-
-
-        for (String s : getGroups()) {
-
-            if (getArrValues("Commands", s).contains(cmd)) {
-
-                permlvl = getPermissionLevel("Commands", s);
-                break;
-
-            }
-
-        }
-
-        return permlvl;
+        return getPermLvl(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete());
 
     }
 
     public static int getMentionedUserPermLevel(MessageReceivedEvent event, String userId) {
 
-        if (userId.equals("286270602820452353"))
-            return 9999;
+        return getPermLvl(event.getGuild().retrieveMemberById(userId).complete());
 
-        if (event.getGuild().retrieveMemberById(userId).complete().hasPermission(Permission.ADMINISTRATOR))
-            return 15;
+    }
 
-        // Firstly, we want to see if the user's role exists in the database
-        Member m = event.getGuild().retrieveMemberById(userId).complete();
-        List<Role> lr = m.getRoles();
+    private static int getPermLvl(Member m) {
 
-        for (String s : getGroups()) {
+        if (m != null) {
 
-            for (Role r : lr) {
+            if (m.getId().equals("286270602820452353"))
+                return 9999;
 
-                if (getArrValues("Roles", s).contains(r.getId())) {
+            if (m.hasPermission(Permission.ADMINISTRATOR))
+                return 15;
 
-                    return MongoDBHandler.getPermissionLevel("Roles", s);
+            List<Role> lr = m.getRoles();
+
+            for (String s : getGroups()) {
+
+                List<String> values = getArrValues("Roles", s);
+
+                for (Role r : lr) {
+
+                    if (values.contains(r.getId())) {
+
+                        return getPermissionLevel("Roles", s);
+
+                    }
 
                 }
 
@@ -130,6 +89,32 @@ public class functions {
         }
 
         return 0;
+
     }
+
+    public static int getCommandPermLvl(String cmd) {
+
+        for (String s : getGroups()) {
+
+            if (getArrValues("Commands", s).contains(cmd)) {
+
+                return getPermissionLevel("Commands", s);
+
+            }
+
+        }
+
+        // if no return value, then we can just return the default command permission level
+        // Note: User - 0
+        // Punishments - 2
+        // Logs - 5
+        // Configuration - 8
+
+        return CommandHandler.getPermissionLevel(cmd);
+
+
+    }
+
+
 
 }

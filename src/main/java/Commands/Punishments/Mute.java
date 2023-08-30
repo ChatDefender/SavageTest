@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class Mute extends BaseCommand {
 
     public Mute() {
-        super("mute", new String[] {}, "mute [@user | userId] [duration] [reason]", "Mutes a specified user for a specified duration", "Used when someone is being naughty in the chatty, or tickles rose on the wrong day");
+        super("mute", new String[] {}, "mute [@user | userId] [duration] [reason]", "Mutes a specified user for a specified duration", "Used when someone is being naughty in the chatty, or tickles rose on the wrong day", 2);
     }
 
     public void run(MessageReceivedEvent event, String[] args) {

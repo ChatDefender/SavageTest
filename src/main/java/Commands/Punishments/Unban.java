@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 public class Unban extends BaseCommand {
 
     public Unban() {
-        super("unban", new String[] {}, "unban [userId]", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons");
+        super("unban", new String[] {}, "unban [userId]", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons", 2);
     }
 
     @Override

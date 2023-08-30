@@ -12,7 +12,7 @@ public class Unmute extends BaseCommand {
 
 
     public Unmute() {
-        super("unmute", new String[] {}, "unmute [@user | userId]", "Unmutes a user", "Used when someone finally started acting right, removed the permanent mute, or other reasons");
+        super("unmute", new String[] {}, "unmute [@user | userId]", "Unmutes a user", "Used when someone finally started acting right, removed the permanent mute, or other reasons", 2);
     }
 
     @Override

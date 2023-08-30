@@ -21,6 +21,9 @@ public class RoleDelete  extends ListenerAdapter {
 
         });
 
+        // TODO if role is deleted, check if muted role id matches and remove it
+
+
     }
 
 }

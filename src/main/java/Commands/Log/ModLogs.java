@@ -19,7 +19,7 @@ public class ModLogs extends BaseCommand {
 
 
     public ModLogs() {
-        super("modlogs", new String[] {"modlog"}, "modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]", "Retrieves records from the punishment log database.", "Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries");
+        super("modlogs", new String[] {"modlog"}, "modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]", "Retrieves records from the punishment log database.", "Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", 5);
     }
 
     @Override

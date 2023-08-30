@@ -48,4 +48,15 @@ public class CommandHandler {
 
     }
 
+    public static int getPermissionLevel(String cmd) {
+
+        return commandMap.get(cmd).getPermissionLevel();
+
+    }
+
+    public static BaseCommand getCommand(String cmd) {
+
+        return commandMap.get(cmd);
+
+    }
 }

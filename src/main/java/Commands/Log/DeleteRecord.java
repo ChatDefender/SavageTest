@@ -9,7 +9,7 @@ public class DeleteRecord extends BaseCommand {
 
 
     public DeleteRecord() {
-        super("deleterecord", new String[]{"delrec"}, "delrec [#PunishmentLogId]", "Deletes a record from the punishment logs database", "");
+        super("deleterecord", new String[]{"delrec"}, "delrec [#PunishmentLogId]", "Deletes a record from the punishment logs database", "", 5);
     }
 
     @Override
