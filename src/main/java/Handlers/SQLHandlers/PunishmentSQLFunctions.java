@@ -23,27 +23,34 @@ public class PunishmentSQLFunctions {
 
     public static int insertPunishment(String punType, String userId, String staffId, String duration, String reason) {
 
-        String sql = "INSERT INTO PunishmentLogs (PunishmentType, UserId, StaffId, Duration, Reason) VALUES ('"+punType+"', '"+userId+"', '"+staffId+"', '"+duration+"', '"+reason.replace("\"", "\\\"").replace("'", "\\'")+"')";
+        reason = reason.replace("'", "U+0027").replace("\"", "U+0022");
 
-        BasicSQLFunctions.runStmt(url, sql);
+        try (Connection connection = DriverManager.getConnection(url))  {
+            String sql = "INSERT INTO PunishmentLogs (PunishmentType, UserId, StaffId, Duration, Reason) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-        String SQL = "SELECT * FROM PunishmentLogs WHERE PunishmentType = '"+punType+"' AND UserId = '"+userId+"' AND StaffId = '"+staffId+"' AND Duration = '"+duration+"' AND Reason = '"+reason.replace("\"", "\\\"").replace("'", "\\'")+"'";
+            ps.setString(1, punType);
+            ps.setString(2, userId);
+            ps.setString(3, staffId);
+            ps.setString(4, duration);
+            ps.setString(5, reason);
 
-        try (Connection connection = DriverManager.getConnection(url);
-             Statement statement = connection.createStatement()) {
+            int rowAffected = ps.executeUpdate();
+            if (rowAffected > 0) {
 
-            // Perform the query to check if the row exists based on the primary key
-            ResultSet resultSet = statement.executeQuery(SQL);
+                ResultSet generatedKeys = ps.getGeneratedKeys();
 
-            // Check if the ResultSet contains any rows
-            while (resultSet.next()) {
-
-                return Integer.parseInt(resultSet.getString("PunishmentId"));
+                if (generatedKeys.next())
+                    return generatedKeys.getInt(1);
+                else
+                    return 0;
 
             }
 
         } catch (SQLException e) {
+
             e.printStackTrace();
+
         }
 
         return 0;
@@ -69,6 +76,45 @@ public class PunishmentSQLFunctions {
         // return false if an error exists.
         return false;
     }
+
+    public static String getRecordUserId(String logId) {
+        String sql = "SELECT UserId FROM PunishmentLogs WHERE PunishmentId = '"+logId+"'";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             Statement statement = connection.createStatement()) {
+
+            // Perform the query to check if the row exists based on the primary key
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            return resultSet.getString("UserId");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public static String getStaffUserId(String logId) {
+        String sql = "SELECT StaffId FROM PunishmentLogs WHERE PunishmentId = '"+logId+"'";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             Statement statement = connection.createStatement()) {
+
+            // Perform the query to check if the row exists based on the primary key
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            return resultSet.getString("StaffId");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
 
     public static void archiveLog(String logId) {
 

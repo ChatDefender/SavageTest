@@ -2,6 +2,7 @@ package Commands.User;
 
 import Commands.BaseCommand;
 import Main.functions;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class PermissionLevel extends BaseCommand {
@@ -12,18 +13,19 @@ public class PermissionLevel extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
-        if (args.length == 1) {
+        String userId = args.length == 1 ? event.getAuthor().getId() : args[1].replace("<@", "").replace(">", "");
 
-            event.getChannel().sendMessage("Your permission level is: " + functions.getAuthorPermLevel(event)).queue();
+        Member m = event.getGuild().retrieveMemberById(userId).complete();
 
-        } else {
+        int permLvl = args.length == 1 ? functions.getAuthorPermLevel(event) : functions.getMentionedUserPermLevel(event, userId);
 
-            String userId = args[1].replace("<@", "").replace(">", "");
+        sendMessage(event, m, permLvl);
 
-            event.getChannel().sendMessage("The permission level for the mentioned user is: " + functions.getMentionedUserPermLevel(event, userId)).queue();
+    }
 
+    private static void sendMessage(MessageReceivedEvent event, Member m, int permLevel) {
 
-        }
+        event.getChannel().sendMessage(m.getEffectiveName() + "'s permission level is" + permLevel).queue();
 
     }
 

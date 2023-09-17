@@ -17,7 +17,7 @@ public class Unban extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args)  {
 
-        if (args.length < 1) {
+        if (args.length <= 1) {
 
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"unban [user id]").queue();
 

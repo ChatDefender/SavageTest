@@ -18,7 +18,7 @@ public class Warn extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
-        if (args.length < 2) {
+        if (args.length <= 2) {
 
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"warn [user id | user mention] [reason]").queue();
 

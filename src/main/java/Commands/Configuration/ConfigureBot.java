@@ -3,13 +3,14 @@ package Commands.Configuration;
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSQLFunctions;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ConfigureBot extends BaseCommand {
 
 
     public ConfigureBot() {
-        super("configurebot", new String[] {"config", "configbot"}, "config [setting] [value]", "Current Available Settings: prefix, punishmentlogs, mutedrole", "", 8);
+        super("configurebot", new String[] {"config", "configbot"}, "config [setting] [value]", "Current Available Settings: prefix, punishmentlogs, mutedrole", "\nprefix - allows you to issue commands with a specified executor\npunishmentlogs - this is the channel where punishment logs will be kept\nmutedrole - used to mute users with a role", 8);
     }
 
     @Override
@@ -37,15 +38,15 @@ public class ConfigureBot extends BaseCommand {
                     String textChannelId = args[2];
                     textChannelId = textChannelId.replace("<#", "").replace(">", "");
 
-                    if (event.getGuild().getTextChannelById(Long.parseLong(textChannelId)) != null) {
+                    TextChannel tc = event.getGuild().getTextChannelById(Long.parseLong(textChannelId));
+                    if (tc != null) {
 
-                        String finalTextChannelId = textChannelId;
-                        event.getGuild().getTextChannelById(Long.parseLong(textChannelId)).sendMessage("This is a test message").queue(
+                        tc.sendMessage("This is a test message").queue(
 
                                 success -> {
 
-                                    ConfigurationSQLFunctions.setSetting("PunishmentLogId", finalTextChannelId);
-                                    event.getChannel().sendMessage("Successfully updated the punishment logs to " + event.getGuild().getTextChannelById(Long.parseLong(finalTextChannelId)).getName() + " `["+finalTextChannelId+"]`").queue();
+                                    ConfigurationSQLFunctions.setSetting("PunishmentLogId", tc.getId());
+                                    event.getChannel().sendMessage("Successfully updated the punishment logs to " + tc.getName() + " `["+tc.getId()+"]`").queue();
 
                                 },
 

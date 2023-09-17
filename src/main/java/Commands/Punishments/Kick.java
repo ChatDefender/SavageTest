@@ -19,7 +19,7 @@ public class Kick extends BaseCommand {
     public void run(MessageReceivedEvent event, String[] args) {
 
         // Verify text is provided in the arguments
-        if (args.length < 2) {
+        if (args.length <= 2) {
 
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"kick [user id | user mention] [reason]").queue();
 
@@ -44,7 +44,7 @@ public class Kick extends BaseCommand {
 
                 // convert the rest of the arguments into a string
                 StringBuilder reason = new StringBuilder();
-                for (int i = 3; i < args.length; i++) {
+                for (int i = 2; i < args.length; i++) {
 
                     reason.append(args[i]).append(" ");
 

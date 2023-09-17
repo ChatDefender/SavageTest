@@ -36,7 +36,7 @@ public class CommandHandler {
 
         for (String cmd : commandMap.keySet()) {
 
-            if (!Arrays.asList(commandMap.get(cmd).getAliases()).contains(cmd)) {
+            if (!isAlias(cmd)) {
 
                 cmds.add(cmd);
 
@@ -57,6 +57,12 @@ public class CommandHandler {
     public static BaseCommand getCommand(String cmd) {
 
         return commandMap.get(cmd);
+
+    }
+
+    private static boolean isAlias(String cmd) {
+
+        return Arrays.asList(getCommand(cmd).getAliases()).contains(cmd);
 
     }
 }

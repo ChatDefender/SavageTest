@@ -4,6 +4,7 @@ import Commands.BaseCommand;
 import Handlers.CommandHandler;
 import Handlers.MongoDBHandler.MongoDBHandler;
 import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import static Handlers.CommandHandler.doesCommandExist;
 public class ActiveDirectory extends BaseCommand {
 
     public ActiveDirectory() {
-        super("activedirectory", new String[] {"activedir", "dir", "ad"}, "ad [action] [group] [role/command]", "Actions: addGroup, removeGroup, addCommand, removeCommand, addRole, removeRole\nGroups: "+ String.join(", ", MongoDBHandler.getGroups()) +"\nCommands:"+ CommandHandler.getCommands().stream().map(command -> "`" + command + "`").collect(Collectors.joining(", ")), "", 8);
+        super("activedirectory", new String[] {"activedir", "dir", "ad"}, "ad [action] [group] [role/command]", "Grants/Revokes access to commands based on the Active Directory Database", "\nActions: addGroup, removeGroup, addCommand, removeCommand, addRole, removeRole\nGroups: "+ String.join(", ", MongoDBHandler.getGroups()) +"\nCommands: "+ CommandHandler.getCommands().stream().map(command -> "`" + command + "`").collect(Collectors.joining(", ")), 8);
     }
 
     @Override
@@ -158,8 +159,17 @@ public class ActiveDirectory extends BaseCommand {
 
                     } else if (!MongoDBHandler.getArrValues("Roles", groupName).contains(roleId)) {
 
-                        MongoDBHandler.insertIntoActiveDirectory("Roles", groupName, roleId);
-                        event.getChannel().sendMessage("Successfully add the " + event.getGuild().getRoleById(roleId).getName() + " role to the " + groupName + " group.").queue();
+                        Role r = event.getGuild().getRoleById(roleId);
+
+                        if (r != null) {
+
+                            MongoDBHandler.insertIntoActiveDirectory("Roles", groupName, r.getId());
+                            event.getChannel().sendMessage("Successfully add the " + r.getName() + " role to the " + groupName + " group.").queue();
+
+                        } else {
+                            event.getChannel().sendMessage("I could not find that role!").queue();
+                        }
+
 
                     } else {
 
@@ -179,8 +189,19 @@ public class ActiveDirectory extends BaseCommand {
 
                     } else if (MongoDBHandler.getArrValues("Roles", groupName).contains(roleId)) {
 
-                        MongoDBHandler.removeFromActiveDirectory("Roles", groupName, roleId);
-                        event.getChannel().sendMessage("Successfully removed the " + event.getGuild().getRoleById(roleId).getName() + " role from the " + groupName + " group.").queue();
+                        Role r = event.getGuild().getRoleById(roleId);
+
+                        if (r != null) {
+
+                            MongoDBHandler.removeFromActiveDirectory("Roles", groupName, r.getId());
+                            event.getChannel().sendMessage("Successfully removed the " + r.getName() + " role from the " + groupName + " group.").queue();
+
+                        } else {
+
+                            event.getChannel().sendMessage("I could not find the specified role!").queue();
+
+                        }
+
 
                     } else {
 

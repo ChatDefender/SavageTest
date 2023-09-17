@@ -11,15 +11,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+// import java.util.ArrayList;
+// import java.util.Arrays;
+// import java.util.List;
 
 public class ModLogs extends BaseCommand {
 
 
     public ModLogs() {
-        super("modlogs", new String[] {"modlog"}, "modlog [@user | user id] [-u(ser) | -s(taff)] [-a(rchived)]", "Retrieves records from the punishment log database.", "Queries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", 5);
+        super("modlogs", new String[] {"modlog"}, "modlog [@user | user id] [-u(ser) | -s(taff)] [punishment type] [-a(rchived)]", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", 5);
     }
 
     @Override
@@ -110,44 +111,44 @@ public class ModLogs extends BaseCommand {
         }
     }
 
-    public static int getLongestString() {
-
-        List<String> tableBuilder = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(Main.reportFilePath))) {
-            String line;
-
-            // Read the header line to get column names
-            if ((line = br.readLine()) != null) {
-                String[] headers = line.split(",");
-                tableBuilder.addAll(Arrays.asList(headers));
-            }
-
-            // Read the rest of the lines
-            while ((line = br.readLine()) != null) {
-                String[] row = line.split(",");
-                tableBuilder.addAll(Arrays.asList(row));
-            }
-
-            int longest = 0;
-            for (String s : tableBuilder) {
-
-                if (s.length() > longest) {
-
-                    longest = s.length();
-
-                }
-
-            }
-
-            return longest;
-            // Display the table as a string
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
-
-    }
+//    public static int getLongestString() {
+//
+//        List<String> tableBuilder = new ArrayList<>();
+//        try (BufferedReader br = new BufferedReader(new FileReader(Main.reportFilePath))) {
+//            String line;
+//
+//            // Read the header line to get column names
+//            if ((line = br.readLine()) != null) {
+//                String[] headers = line.split(",");
+//                tableBuilder.addAll(Arrays.asList(headers));
+//            }
+//
+//            // Read the rest of the lines
+//            while ((line = br.readLine()) != null) {
+//                String[] row = line.split(",");
+//                tableBuilder.addAll(Arrays.asList(row));
+//            }
+//
+//            int longest = 0;
+//            for (String s : tableBuilder) {
+//
+//                if (s.length() > longest) {
+//
+//                    longest = s.length();
+//
+//                }
+//
+//            }
+//
+//            return longest;
+//            // Display the table as a string
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return 0;
+//
+//    }
 
 
     public static String getTable() {

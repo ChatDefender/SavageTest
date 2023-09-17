@@ -38,10 +38,14 @@ public class MessageEvent extends ListenerAdapter {
                     String command = args[0];
 
                     // If the user has permission to run it, they can
-                    if (functions.getAuthorPermLevel(event) >= functions.getCommandPermLvl(command)) {
+                    if (functions.getAuthorPermLevel(event) >= functions.getCommandPermLvl(CommandHandler.getCommand(command).getName())) {
 
+                        System.out.println("Command Received: " +command + "\nIssuer: " + event.getAuthor().getName() + "\nText Channel: " + event.getChannel().getName() + "\nGuild: " + event.getGuild().getName());
                         // Run the command
                         CommandHandler.executeCommand(command.toLowerCase(), event, args);
+
+                        long timeTook = System.currentTimeMillis() - sysTime;
+                        System.out.println("Command processed. Took: " + timeTook + " ms.");
 
                     }
 

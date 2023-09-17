@@ -15,14 +15,14 @@ import java.util.concurrent.TimeUnit;
 public class Ban extends BaseCommand {
 
     public Ban() {
-        super("ban", new String[] {"banish", "banana", "bananahammer"}, "ban [@user | userId] [duration] [reason]", "Bans a user from the discord server", "", 2);
+        super("ban", new String[] {"banish", "banana", "bananahammer"}, "ban [@user | userId] [duration] [reason]", "Bans a user from the discord server", "Available times are in (m)inutes, (h)ours, (d)ays, (mon)ths, (y)ear, or 0 for indefinite.", 2);
     }
 
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
         // Verify text is provided in the arguments
-        if (args.length < 3) {
+        if (args.length <= 3) {
 
             event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"ban [user id | user mention] [duration (5m)] [reason]").queue();
 
@@ -73,7 +73,7 @@ public class Ban extends BaseCommand {
                 if (timeInMs != -1) {
 
                     long endTime = System.currentTimeMillis() + timeInMs;
-                    TimedPunishmentsSQLFunctions.insertTime("ban", event.getGuild().getId(), userId, ""+endTime);
+                    TimedPunishmentsSQLFunctions.insertTime("ban", event.getGuild().getId(), userId, String.valueOf(endTime));
 
                 }
 

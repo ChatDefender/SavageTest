@@ -54,7 +54,19 @@ public class BasicSQLFunctions {
             while (resultSet.next()) {
                 Object[] rowData = new Object[columnCount];
                 for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = resultSet.getObject(i);
+
+                    Object obj = resultSet.getObject(i);
+
+                    if (obj instanceof String) {
+
+                        rowData[i - 1] = ((String) obj).replace("U+0027", "'").replace("U+0022", "\"");
+
+                    } else {
+
+                        rowData[i - 1] = obj;
+
+                    }
+
                 }
                 rows.add(rowData);
             }
@@ -84,7 +96,7 @@ public class BasicSQLFunctions {
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery(sql);
-            while(resultSet.next()) {
+            if (resultSet.next()) {
 
                 return resultSet.getString(columnName);
 
