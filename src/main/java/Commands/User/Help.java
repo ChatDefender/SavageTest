@@ -48,7 +48,7 @@ public class Help extends BaseCommand {
 
             }
 
-            sb.append("```Requesting User: ").append(event.getAuthor().getName()).append("\n").append("\nCommand").append(new String(new char[longestString - 7])).append("  | Short Description").append("\n");
+            sb.append("```Requesting User: ").append(event.getAuthor().getName()).append("\n").append("\nCommand").append(new String(new char[longestString - 4])).append("| Short Description").append("\n");
 
             for (String s : CommandHandler.getCommands()) {
 
