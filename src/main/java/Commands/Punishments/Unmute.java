@@ -1,7 +1,10 @@
 package Commands.Punishments;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.SQLFunctions;
+import Main.functions;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
@@ -12,24 +15,24 @@ public class Unmute extends BaseCommand {
 
 
     public Unmute() {
-        super("unmute", new String[] {}, "unmute [@user | userId]", "Unmutes a user", "Used when someone finally started acting right, removed the permanent mute, or other reasons", 2);
+        super("unmute", new String[] {}, "unmute {@user | userId}", "Unmutes a user", "Used when someone finally started acting right, removed the permanent mute, or other reasons", Permission.MANAGE_ROLES);
     }
 
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
         // Verify text is provided in the arguments
-        if (args.length <= 1) {
+        if (args.length != 1) {
 
-            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"unmute [user id | user mention]]").queue();
+            event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
 
         } else {
 
-            String muteRoleId =ConfigurationSQLFunctions.getSetting("MuteRoleId");
+            String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
 
             if (muteRoleId.isEmpty()) {
 
-                event.getChannel().sendMessage("The mute role needs to be configured. Run `"+ConfigurationSQLFunctions.getSetting("prefix")+"config muteroleid [@mutedRole | mute role id]`").queue();
+                event.getChannel().sendMessage("The mute role needs to be configured. Run `"+ ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PREFIX)+"setmuteroleid [@mutedRole | mute role id]`").queue();
 
             } else {
 
@@ -42,30 +45,44 @@ public class Unmute extends BaseCommand {
                 } else {
 
                     // Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
-                    String userId = args[1];
-                    userId = userId.replace("<@", "").replace(">", "");
+                    String userId = functions.getUserId(event, args[0]);
 
                     // Now that we have an ID, verify it's a guild member
                     Member member = event.getGuild().retrieveMemberById(userId).complete();
 
-                    PrivateChannel pc = member.getUser().openPrivateChannel().complete();
-                    pc.sendMessage("```\nUNMUTED IN " + member.getGuild().getName() + "\nModerator: " +event.getAuthor().getName() + "```" ).queue(
-                            success -> event.getChannel().sendMessage("Sent user a private message").queue(),
-                            error -> event.getChannel().sendMessage("Failed to send private message: " + error.getMessage()).queue()
-                    );
+                    if (event.getGuild().getMember(member).getRoles().contains(r)) {
 
-                    event.getGuild().removeRoleFromMember(member, r).queue();
-                    event.getChannel().sendMessage("Successfully unmuted " + member.getEffectiveName()).queue();
+                        event.getGuild().removeRoleFromMember(member, r).queue();
 
-                    TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
-                    if (tc != null && tc.canTalk()) {
+                        PrivateChannel pc = member.getUser().openPrivateChannel().complete();
+                        pc.sendMessage("```\nUNMUTED IN " + member.getGuild().getName() + "\nModerator: " + event.getAuthor().getName() + "```").queue();
 
-                        tc.sendMessage("```\nUSER UNMUTED " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\n```" ).queue();
+                        event.getChannel().sendMessage("Successfully unmuted " + member.getEffectiveName()).queue();
+
+                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
+
+                        if (punishmentLogChannelId != null) {
+
+                            TextChannel tc = event.getGuild().getTextChannelById(punishmentLogChannelId);
+                            if (tc != null && tc.canTalk()) {
+
+                                tc.sendMessage("```\nPUNISHMENT EXECUTED: UNMUTE" + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "```" ).queue();
+
+                            } else {
+
+                                event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+
+                            }
+
+                        }
 
                     } else {
 
-                        event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+                        event.getChannel().sendMessage("The user is not currently muted.").queue();
+
                     }
+
+
 
 
                 }

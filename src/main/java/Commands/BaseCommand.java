@@ -1,5 +1,6 @@
 package Commands;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class BaseCommand {
@@ -9,9 +10,9 @@ public class BaseCommand {
     String usage;
     String smallDescription;
     String longDescription;
-    int permissionlevel;
+    Permission permissionlevel;
 
-    public BaseCommand(String n, String[] a, String u, String sd, String ld, int permissionlevel) {
+    public BaseCommand(String n, String[] a, String u, String sd, String ld, Permission permissionlevel) {
 
         this.name = n;
         this.alias = a;
@@ -40,7 +41,7 @@ public class BaseCommand {
 
     }
 
-    public int getPermissionLevel() {
+    public Permission getPermissionLevel() {
 
         return this.permissionlevel;
 

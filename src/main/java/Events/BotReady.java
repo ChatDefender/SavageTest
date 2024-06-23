@@ -1,8 +1,8 @@
 package Events;
 
-import Handlers.MongoDBHandler.MongoDBHandler;
-import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
-import net.dv8tion.jda.api.entities.Role;
+import Handlers.SQLHandlers.ActiveDirectoryManagement;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.PunishmentManagement;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 
@@ -13,31 +13,23 @@ public class BotReady extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
 
-        List<Role> roles = Objects.requireNonNull(event.getJDA().getGuildById("1132678375660585061")).getRoles();
+        System.out.println("Received ready event....initializing...");
 
-        List<String> roleIds = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
 
-        for (Role r : roles) {
+        event.getJDA().getGuilds().forEach(g -> {
 
-            roleIds.add(r.getId());
+            g.getRoles().forEach(r -> sb.append(r.getId()).append(":"));
 
-        }
+            ActiveDirectoryManagement.verifyRoles(sb.toString());
 
-        MongoDBHandler.getGroups().forEach(g -> {
-
-            MongoDBHandler.getArrValues("Roles", g).forEach(role -> {
-
-                if (!roleIds.contains(role)) {
-
-                    MongoDBHandler.removeFromActiveDirectory("Roles", g, role);
-
-                }
-
-            });
+            ConfigurationSettings.verifySettings(g.getId());
 
         });
 
         startSchedule(event);
+
+        System.out.println("Schedule for timed commands has been initiated.");
 
     }
 
@@ -48,7 +40,7 @@ public class BotReady extends ListenerAdapter {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                TimedPunishmentsSQLFunctions.filter(event);
+                PunishmentManagement.filter(event);
             }
         };
 
@@ -56,5 +48,7 @@ public class BotReady extends ListenerAdapter {
         timer.scheduleAtFixedRate(task, 0, 1000);
 
     }
+
+
 
 }

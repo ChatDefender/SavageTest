@@ -1,7 +1,10 @@
 package Commands.Punishments;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.SQLFunctions;
+import Main.functions;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -11,26 +14,27 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 public class Unban extends BaseCommand {
 
     public Unban() {
-        super("unban", new String[] {}, "unban [userId]", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons", 2);
+        super("unban", new String[] {}, "unban {userId}", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons", Permission.BAN_MEMBERS);
     }
 
     @Override
     public void run(MessageReceivedEvent event, String[] args)  {
 
-        if (args.length <= 1) {
+        if (args.length != 1) {
 
-            event.getChannel().sendMessage("Command Layout: "+ ConfigurationSQLFunctions.getSetting("Prefix")+"unban [user id]").queue();
+            event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
 
         } else {
 
             User user;
 
             try {
-                user = event.getJDA().retrieveUserById(args[1]).complete();
+
+                user = event.getJDA().retrieveUserById(args[0]).complete();
 
                 if (user == null) {
 
-                    event.getChannel().sendMessage("I could not find that member.").queue();
+                    event.getChannel().sendMessage("I could not find that user.").queue();
 
                 } else {
 
@@ -56,14 +60,21 @@ public class Unban extends BaseCommand {
 
                         );
 
-                        TextChannel tc = event.getGuild().getTextChannelById(ConfigurationSQLFunctions.getSetting("PunishmentLogId"));
-                        if (tc != null && tc.canTalk()) {
+                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
 
-                            tc.sendMessage("```\nUSER UNBANNED " +  "\nUser: " + user.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\n```" ).queue();
+                        if (punishmentLogChannelId != null) {
 
-                        } else {
+                            TextChannel tc = event.getGuild().getTextChannelById(punishmentLogChannelId);
+                            if (tc != null && tc.canTalk()) {
 
-                            event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+                                tc.sendMessage("```\nPUNISHMENT EXECUTED: UNBAN\nUser: " + user.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "```" ).queue();
+
+                            } else {
+
+                                event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+
+                            }
+
                         }
 
 
@@ -77,11 +88,13 @@ public class Unban extends BaseCommand {
 
             } catch (ErrorResponseException e) {
 
-                e.printStackTrace();
-
                 if (e.getErrorCode() == 10013) {
 
                     event.getChannel().sendMessage("I could not find the member specified.").queue();
+
+                } else {
+
+                    e.printStackTrace();
 
                 }
 

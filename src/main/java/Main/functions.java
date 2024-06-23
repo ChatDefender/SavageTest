@@ -1,19 +1,59 @@
 package Main;
 
-import static Handlers.MongoDBHandler.MongoDBHandler.*;
-
+import Commands.BaseCommand;
 import Handlers.CommandHandler;
-import Handlers.MongoDBHandler.MongoDBHandler;
+import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.json.JSONObject;
 
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class functions {
+
+    /*
+     * Purpose: Get config information from the config.json file
+     * This fill will never be seen by the public
+     */
+
+    private static final String CREDENTIALS_FILE = "config.json"; // Relative path to the config file
+
+    public static String getCredential(String key) {
+        try {
+            // Determine the working directory
+            String currentDir = System.getProperty("user.dir");
+
+            // Construct paths for both development and production environments
+            Path devPath = Paths.get(currentDir, CREDENTIALS_FILE); // Directly in the project root in development
+            Path prodPath = Paths.get(currentDir, "..", CREDENTIALS_FILE); // One level up from where the .jar resides in production
+
+            // Use the path that actually exists
+            Path configPath = Files.exists(devPath) ? devPath : prodPath;
+
+            // Read the content of the credentials file
+            String content = new String(Files.readAllBytes(configPath));
+
+            // Parse JSON content into a JSONObject
+            JSONObject jsonObject = new JSONObject(content);
+
+            // Return the value associated with the provided key
+            return jsonObject.getString(key);
+        } catch (IOException e) {
+            System.err.println("Error reading credentials file: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error processing credentials file: " + e.getMessage());
+            return null;
+        }
+    }
 
     public static long timeToMilliseconds(String duration) {
 
@@ -46,75 +86,143 @@ public class functions {
 
     }
 
-    public static int getAuthorPermLevel(MessageReceivedEvent event) {
 
-        return getPermLvl(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete());
+    /*
+    @param String GuildID
+    @param String commandNameOrAliases
+     */
+    public static String buildHelpBlock(String commandNameOrAliases) {
 
-    }
+        StringBuilder sb = new StringBuilder();
 
-    public static int getMentionedUserPermLevel(MessageReceivedEvent event, String userId) {
+        BaseCommand command = CommandHandler.getCommand(commandNameOrAliases.toLowerCase());
+        sb.append("```Command Help: ").append(command.getName()).append("\n");
+        sb.append("Name: ").append(command.getName()).append("\n");
 
-        return getPermLvl(event.getGuild().retrieveMemberById(userId).complete());
+        sb.append("Alias: ");
+        for (String s : command.getAliases()) {
 
-    }
-
-    private static int getPermLvl(Member m) {
-
-        if (m != null) {
-
-            if (m.getId().equals("286270602820452353"))
-                return 9999;
-
-            if (m.hasPermission(Permission.ADMINISTRATOR))
-                return 15;
-
-            List<Role> lr = m.getRoles();
-
-            for (String s : getGroups()) {
-
-                List<String> values = getArrValues("Roles", s);
-
-                for (Role r : lr) {
-
-                    if (values.contains(r.getId())) {
-
-                        return getPermissionLevel("Roles", s);
-
-                    }
-
-                }
-
-            }
+            sb.append(s).append(", ");
 
         }
 
-        return 0;
+        sb.append("\n");
+        sb.append("Usage: ").append(command.getUsage()).append("\n");
+        sb.append("Short Description: ").append(command.getShortDescription()).append("\n");
+        sb.append("Long Description: ").append(command.getLongDescription()).append("\n");
+        sb.append("```");
+
+        return sb.toString();
 
     }
 
-    public static int getCommandPermLvl(String cmd) {
+    public static String getUserId(MessageReceivedEvent event, String args) {
 
-        for (String s : getGroups()) {
+        args = args.replace("<@", "").replace(">", "");
 
-            if (getArrValues("Commands", s).contains(cmd)) {
+        return verifyMember(event, args);
 
-                return getPermissionLevel("Commands", s);
+    }
+
+    public static String verifyChannel(MessageReceivedEvent event, String args) {
+
+        try {
+
+            // if the role is mentioned, remove the symbols.
+            args = args.replace("<#", "").replace(">", "");
+
+            // now try to retrieve the role based on the string itself.
+            TextChannel tc = event.getGuild().getTextChannelById(args);
+
+            // if the role exists, then return the id.
+            if (tc != null) {
+
+                return tc.getId();
 
             }
 
+            return null;
+
+        } catch (Exception e) {
+
+            return null;
+
         }
-
-        // if no return value, then we can just return the default command permission level
-        // Note: User - 0
-        // Punishments - 2
-        // Logs - 5
-        // Configuration - 8
-
-        return CommandHandler.getPermissionLevel(cmd);
-
 
     }
 
+    public static String verifyMember(MessageReceivedEvent event, String args) {
 
+        try {
+
+            Member m = event.getGuild().retrieveMemberById(args).complete();
+
+            if (m != null) {
+
+                return m.getId();
+
+            }
+
+            return null;
+
+        } catch (Exception e) {
+
+            return null;
+
+        }
+
+    }
+
+    public static String verifyRole(MessageReceivedEvent event, String args) {
+
+        try {
+
+            // if the role is mentioned, remove the symbols.
+            args = args.replace("<@&", "").replace(">", "");
+
+            // now try to retrieve the role based on the string itself.
+            Role r = event.getGuild().getRoleById(args);
+
+            // if the role exists, then return the id.
+            if (r != null) {
+
+                return r.getId();
+
+            }
+
+            return null;
+
+        } catch (Exception e) {
+
+            return null;
+
+        }
+    }
+
+    public static boolean hasPermissions(Member member, Member target, String GuildId, String commandName) {
+
+        boolean hasPerms;
+
+        hasPerms = (member.isOwner() || member.hasPermission(Permission.ADMINISTRATOR));
+
+        if (!hasPerms) {
+
+            StringBuilder sb = new StringBuilder();
+
+            member.getRoles().forEach(r -> sb.append(r.getId()).append(":"));
+
+            hasPerms = ActiveDirectoryManagement.hasPermission(GuildId, sb.toString(), commandName);
+
+        }
+
+        if (!hasPerms) {
+
+            hasPerms = member.hasPermission(CommandHandler.getPermissionLevel(commandName));
+
+        }
+
+        return hasPerms;
+
+    }
 
 }

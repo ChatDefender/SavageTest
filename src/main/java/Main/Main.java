@@ -1,67 +1,55 @@
 package Main;
 
-import Commands.Configuration.ActiveDirectory;
-import Commands.Configuration.ConfigureBot;
-import Commands.Log.ClearLogs;
-import Commands.Log.DeleteRecord;
-import Commands.Log.ModLogs;
-import Commands.Log.RecoverRecord;
+import Commands.Configuration.ActiveDirectory.*;
+import Commands.Configuration.ConfigureBot.SetMutedRole;
+import Commands.Configuration.ConfigureBot.SetPrefix;
+import Commands.Configuration.ConfigureBot.SetPunishmentLogsChannel;
+import Commands.Log.*;
 import Commands.Punishments.*;
-import Commands.User.Aboose;
+import Commands.User.Birthday;
 import Commands.User.Help;
-import Commands.User.PermissionLevel;
-import Events.MemberJoin;
+import Events.*;
 import Handlers.CommandHandler;
-import Handlers.MongoDBHandler.MongoDBHandler;
-import Handlers.SQLHandlers.ConfigurationSQLFunctions;
-import Handlers.SQLHandlers.PunishmentSQLFunctions;
-import Events.BotReady;
-import Events.MessageEvent;
-import Events.RoleDelete;
-import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Main {
 
-    // Username: user_savage
-    // Password: password_T2yp7P0o
-
-    public static String reportFilePath = "src\\main\\resources\\Reports\\temp.csv";
-
     public static void main(String[] args) {
-        JDA jda = JDABuilder.createDefault("MTEzMjY3NzE1ODQ5MDM0NTU1NA.GWeGuB.FPRguDCQCaZvuRgt6ucGGP523LEACZT2yp7P0o")
+        JDA jda = JDABuilder.createDefault(functions.getCredential("bot_api_key"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .setBulkDeleteSplittingEnabled(false)
                 .setActivity(Activity.watching("Chat"))
+                .addEventListeners(new BotReady())
                 .build();
 
-        verifyDatabases();
         registerCommands();
 
         jda.addEventListener(new MessageEvent());
         jda.addEventListener(new RoleDelete());
-        jda.addEventListener(new BotReady());
         jda.addEventListener(new MemberJoin());
-    }
+        jda.addEventListener(new GuildJoin());
 
-    private static void verifyDatabases() {
-
-        MongoDBHandler.verifyCollections();
-        PunishmentSQLFunctions.createTable();
-        ConfigurationSQLFunctions.createTable();
-        TimedPunishmentsSQLFunctions.createTable();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Sending wake-up request at - " + new Date());
+            }
+        }, 0, 30000); // Output every 30 seconds
 
     }
 
     private static void registerCommands() {
 
-        CommandHandler.registerCommand(new ActiveDirectory());
-        CommandHandler.registerCommand(new ConfigureBot());
-        CommandHandler.registerCommand(new ClearLogs());
+        CommandHandler.registerCommand(new DeleteLogs());
         CommandHandler.registerCommand(new DeleteRecord());
         CommandHandler.registerCommand(new ModLogs());
         CommandHandler.registerCommand(new RecoverRecord());
@@ -71,10 +59,18 @@ public class Main {
         CommandHandler.registerCommand(new Unban());
         CommandHandler.registerCommand(new Unmute());
         CommandHandler.registerCommand(new Warn());
-        CommandHandler.registerCommand(new PermissionLevel());
-        CommandHandler.registerCommand(new Aboose());
         CommandHandler.registerCommand(new Help());
-
+        CommandHandler.registerCommand(new AddGroup());
+        CommandHandler.registerCommand(new AddRole());
+        CommandHandler.registerCommand(new AddCommand());
+        CommandHandler.registerCommand(new RemoveGroup());
+        CommandHandler.registerCommand(new RemoveRole());
+        CommandHandler.registerCommand(new RemoveCommand());
+        CommandHandler.registerCommand(new SetMutedRole());
+        CommandHandler.registerCommand(new SetPrefix());
+        CommandHandler.registerCommand(new SetPunishmentLogsChannel());
+        CommandHandler.registerCommand(new Birthday());
+        CommandHandler.registerCommand(new RecoverLogs());
     }
 
 }

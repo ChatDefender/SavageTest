@@ -1,7 +1,8 @@
 package Events;
 
-import Handlers.SQLHandlers.ConfigurationSQLFunctions;
-import Handlers.SQLHandlers.TimedPunishmentsSQLFunctions;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.SQLFunctions;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -12,9 +13,9 @@ public class MemberJoin extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
-        if(TimedPunishmentsSQLFunctions.isCurrentlyMuted(event.getMember().getId())) {
+        if(PunishmentManagement.isCurrentlyMuted(event.getGuild().getId(), event.getMember().getId())) {
 
-            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(ConfigurationSQLFunctions.getSetting("MuteRoleId")))).complete();
+            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID)))).complete();
 
         }
 

@@ -1,6 +1,7 @@
 package Events;
 
-import Handlers.MongoDBHandler.MongoDBHandler;
+import Handlers.SQLHandlers.ActiveDirectoryManagement;
+import Handlers.SQLHandlers.ConfigurationSettings;
 import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -9,20 +10,9 @@ public class RoleDelete  extends ListenerAdapter {
     @Override
     public void onRoleDelete(RoleDeleteEvent event) {
 
-        String roleId = event.getRole().getId();
+        ActiveDirectoryManagement.verifyRoles(event.getRole().getId());
 
-        MongoDBHandler.getGroups().forEach(g -> {
-
-            if (MongoDBHandler.getArrValues("Roles", g).contains(roleId)) {
-
-                MongoDBHandler.removeFromActiveDirectory("Roles", g, roleId);
-
-            }
-
-        });
-
-        // TODO if role is deleted, check if muted role id matches and remove it
-
+        ConfigurationSettings.removeMutedRole(event.getGuild().getId(), event.getRole().getId());
 
     }
 

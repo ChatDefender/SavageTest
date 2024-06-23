@@ -1,6 +1,7 @@
 package Handlers;
 
 import Commands.BaseCommand;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class CommandHandler {
 
     }
 
-    public static int getPermissionLevel(String cmd) {
+    public static Permission getPermissionLevel(String cmd) {
 
         return commandMap.get(cmd).getPermissionLevel();
 
@@ -60,9 +61,10 @@ public class CommandHandler {
 
     }
 
-    private static boolean isAlias(String cmd) {
+    public static boolean isAlias(String cmd) {
 
         return Arrays.asList(getCommand(cmd).getAliases()).contains(cmd);
 
     }
+
 }

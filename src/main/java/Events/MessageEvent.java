@@ -1,7 +1,9 @@
 package Events;
 
 import Handlers.CommandHandler;
-import Handlers.SQLHandlers.ConfigurationSQLFunctions;
+import Handlers.SQLHandlers.CommandManagement;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -13,39 +15,76 @@ public class MessageEvent extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        long sysTime = System.currentTimeMillis();
-        System.out.println("Message processioning...");
+        if (!event.getAuthor().isBot()) {
 
-        // Classifiers
-        Message message = event.getMessage();
-        User author = event.getAuthor();
+            // Classifiers
+            Message message = event.getMessage();
+            User author = event.getAuthor();
 
-        // If the message is from a bot, we want to ignore it.
-        if (!author.isBot()) {
+            // If the message is from a bot, we want to ignore it.
+            if (!author.isBot()) {
 
-            // If the message is from a text channel, this is where we want to filter it by type
-            if (event.isFromType(ChannelType.TEXT)) {
+                // If the message is from a text channel, this is where we want to filter it by type
+                if (event.isFromType(ChannelType.TEXT)) {
 
-                // Temporary prefix. This will be updated by the user(s)
-                String prefix = ConfigurationSQLFunctions.getSetting("Prefix");
+                    String prefix = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PREFIX);
+                    String commandLine = message.getContentRaw();
 
-                // Triggers the command filtration section.
-                if (message.getContentRaw().startsWith(prefix)) {
+                    if (commandLine.startsWith(prefix) || event.getMessage().getMentions().isMentioned(event.getJDA().getSelfUser())) {
 
-                    // Get the command and args
-                    String commandLine = message.getContentRaw().replace(prefix, "");
-                    String[] args = commandLine.split("\\s+");
-                    String command = args[0];
+                        commandLine = commandLine.substring(prefix.length());
+                        String[] parts = commandLine.split("\\s+", 2);
+                        String command = parts[0];
 
-                    // If the user has permission to run it, they can
-                    if (functions.getAuthorPermLevel(event) >= functions.getCommandPermLvl(CommandHandler.getCommand(command).getName())) {
+                        String[] args;
+                        if (parts.length > 1) {
 
-                        System.out.println("Command Received: " +command + "\nIssuer: " + event.getAuthor().getName() + "\nText Channel: " + event.getChannel().getName() + "\nGuild: " + event.getGuild().getName());
-                        // Run the command
-                        CommandHandler.executeCommand(command.toLowerCase(), event, args);
+                            String argsString = parts[1];
+                            args = argsString.split("\\s+");
 
-                        long timeTook = System.currentTimeMillis() - sysTime;
-                        System.out.println("Command processed. Took: " + timeTook + " ms.");
+                        } else {
+
+                            args = new String[0];
+
+                        }
+
+                        if (CommandHandler.doesCommandExist(command)) {
+
+                            boolean hasPerms = functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getMember(), event.getGuild().getId(), command);
+
+                            if (hasPerms) {
+
+                                int cmdLogId = CommandManagement.logCommand(event.getGuild().getId(),
+                                        event.getChannel().getId(),
+                                        event.getAuthor().getId(),
+                                        CommandHandler.getCommand(command).getName(),
+                                        1);
+
+                                try {
+
+                                    CommandHandler.executeCommand(command.toLowerCase(), event, args);
+
+                                } catch (Exception e ) {
+
+                                    CommandManagement.logCmdError(cmdLogId, command + ".java", e.getMessage());
+
+                                    e.printStackTrace();
+
+                                }
+
+                            } else {
+
+                                int cmdlogid = CommandManagement.logCommand(event.getGuild().getId(),
+                                        event.getChannel().getId(),
+                                        event.getAuthor().getId(),
+                                        CommandHandler.getCommand(command).getName(),
+                                        0);
+
+                                CommandManagement.logCmdError(cmdlogid, "MessageEvent.java", "User " + event.getAuthor().getId() + " did not have permissions to run this command.");
+
+                            }
+
+                        }
 
                     }
 
@@ -54,9 +93,6 @@ public class MessageEvent extends ListenerAdapter {
             }
 
         }
-
-        long timeTook = System.currentTimeMillis() - sysTime;
-        System.out.println("Message processed. Took: " + timeTook + " ms.");
 
     }
 
