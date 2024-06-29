@@ -19,11 +19,6 @@ import java.util.regex.Pattern;
 
 public class functions {
 
-    /*
-     * Purpose: Get config information from the config.json file
-     * This fill will never be seen by the public
-     */
-
     private static final String CREDENTIALS_FILE = "config.json"; // Relative path to the config file
 
     public static String getCredential(String key) {
@@ -86,11 +81,6 @@ public class functions {
 
     }
 
-
-    /*
-    @param String GuildID
-    @param String commandNameOrAliases
-     */
     public static String buildHelpBlock(String commandNameOrAliases) {
 
         StringBuilder sb = new StringBuilder();

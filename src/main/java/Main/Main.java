@@ -23,6 +23,7 @@ import java.util.TimerTask;
 public class Main {
 
     public static void main(String[] args) {
+
         JDA jda = JDABuilder.createDefault(functions.getCredential("bot_api_key"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .setBulkDeleteSplittingEnabled(false)
@@ -71,6 +72,7 @@ public class Main {
         CommandHandler.registerCommand(new SetPunishmentLogsChannel());
         CommandHandler.registerCommand(new Birthday());
         CommandHandler.registerCommand(new RecoverLogs());
+
     }
 
 }
