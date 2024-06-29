@@ -17,6 +17,7 @@ public class Birthday extends BaseCommand {
 
             event.getChannel().sendMessage("Happy birthday " + args[0] + "! \nhttps://www.twitch.tv/lolipopgi/clip/CuteEasyMacaroniTBTacoRight-GEyluBFXObw-02qG").queue();
 
+
         }
 
     }
