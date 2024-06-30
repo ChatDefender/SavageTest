@@ -92,7 +92,7 @@ public class PunishmentManagement {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ ? = call punishment_management.insert_punishment(?, ?, ?, ?, ?, ?) }";
+            String procCall = "{ ? = call punishment_log_management.insert_punishment(?, ?, ?, ?, ?, ?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -213,7 +213,7 @@ public class PunishmentManagement {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ call punishment_management.archive(?) }";
+            String procCall = "{ call punishment_log_management.archive(?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -237,7 +237,7 @@ public class PunishmentManagement {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ call punishment_management.bulk_archive(?, ?, ?) }";
+            String procCall = "{ call punishment_log_management.bulk_archive(?, ?, ?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -264,7 +264,7 @@ public class PunishmentManagement {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ call punishment_management.unarchive(?) }";
+            String procCall = "{ call punishment_log_management.unarchive(?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -288,7 +288,7 @@ public class PunishmentManagement {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ call punishment_management.bulk_unarchive(?, ?, ?) }";
+            String procCall = "{ call punishment_log_management.bulk_unarchive(?, ?, ?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -315,14 +315,14 @@ public class PunishmentManagement {
 
         if (showAll && punType.equals(SQLFunctions.Punishments.ALL)) {
             // if show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_management.GETPUNISHMENTLOGSFORUSER(?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETPUNISHMENTLOGSFORUSER(?, ?)}";
         } else if (showAll) {
             // If show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_management.GETPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
         } else if(punType.equals(SQLFunctions.Punishments.ALL)) {
-            functionCall = "{? = call punishment_management.GETARCHIVEDPUNISHMENTLOGSFORUSER(?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTLOGSFORUSER(?, ?)}";
         } else {
-            functionCall = "{? = call punishment_management.GETARCHIVEDPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
         }
 
         String rtnVal = null;
@@ -375,14 +375,14 @@ public class PunishmentManagement {
 
         if (showAll && punType.equals(SQLFunctions.Punishments.ALL)) {
             // if show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_management.GETPUNISHMENTLOGSFORSTAFF(?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETPUNISHMENTLOGSFORSTAFF(?, ?)}";
         } else if (showAll) {
             // If show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_management.GETPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
         } else if(punType.equals(SQLFunctions.Punishments.ALL)) {
-            functionCall = "{? = call punishment_management.GETARCHIVEDPUNISHMENTLOGSFORSTAFF(?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTLOGSFORSTAFF(?, ?)}";
         } else {
-            functionCall = "{? = call punishment_management.GETARCHIVEDPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
+            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
         }
 
         String rtnVal = null;
