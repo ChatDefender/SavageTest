@@ -1,4 +1,4 @@
-package Commands.Configuration.ActiveDirectory;
+package Commands.ActiveDirectory;
 
 import Commands.BaseCommand;
 import Handlers.CommandHandler;

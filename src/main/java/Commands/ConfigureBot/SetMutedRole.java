@@ -1,4 +1,4 @@
-package Commands.Configuration.ConfigureBot;
+package Commands.ConfigureBot;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;

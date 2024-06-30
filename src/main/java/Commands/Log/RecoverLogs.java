@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RecoverLogs extends BaseCommand {
 
     public RecoverLogs() {
-        super("deletelogs", new String[] {"deletelog"}, "clearlogs {@user | user_id} {-staff}", "Archives logs from a specified users.", "Can only bulk delete records from users. Cannot bulk delete staff records.", Permission.ADMINISTRATOR);
+        super("recoverlogs", new String[] {"reclogs"}, "clearlogs {@user | user_id} {-staff}", "Archives logs from a specified users.", "Can only bulk delete records from users. Cannot bulk delete staff records.", Permission.ADMINISTRATOR);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class RecoverLogs extends BaseCommand {
 
                 if (event.getAuthor().getId().equals(u.getId())) {
 
-                    event.getChannel().sendMessage("You cannot clear your own logs!").queue();
+                    event.getChannel().sendMessage("You cannot recover your own logs!").queue();
 
                 } else {
 
@@ -46,7 +46,7 @@ public class RecoverLogs extends BaseCommand {
 
                     PunishmentManagement.bulkUnarchive(event.getGuild().getId(), isStaff, u.getId());
 
-                    event.getChannel().sendMessage("Successfully cleared logs for " + name + "`[" + u.getId() + "]`").queue();
+                    event.getChannel().sendMessage("Successfully recovered logs for " + name + "`[" + u.getId() + "]`").queue();
 
                 }
 

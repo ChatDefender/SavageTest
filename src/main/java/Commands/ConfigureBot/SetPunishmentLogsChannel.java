@@ -1,4 +1,4 @@
-package Commands.Configuration.ConfigureBot;
+package Commands.ConfigureBot;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;
@@ -11,7 +11,7 @@ import static Main.functions.verifyChannel;
 
 public class SetPunishmentLogsChannel extends BaseCommand {
     public SetPunishmentLogsChannel() {
-        super("setpunishmentlogchannel", new String[] {"setpunlogid"} , "setpunishmentlogchannel [#channel | channel_id]", "Sets the puinishment log channel id.", "", Permission.ADMINISTRATOR);
+        super("setpunishmentlogchannel", new String[] {"setpunlogchannel"} , "setpunishmentlogchannel [#channel | channel_id]", "Sets the puinishment log channel id.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

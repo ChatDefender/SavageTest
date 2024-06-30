@@ -1,4 +1,4 @@
-package Commands.Configuration.ActiveDirectory;
+package Commands.ActiveDirectory;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
@@ -8,13 +8,13 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static Main.functions.verifyRole;
 
-public class RemoveRole extends BaseCommand {
+public class AddRole extends BaseCommand {
 
-    public RemoveRole() {
-        super("removerole",
-                new String[] { },
-                "removerole [group_name] [@role | role_id]",
-                "Removes a group.",
+    public AddRole() {
+        super("addrole",
+                new String[] {  },
+                "addrole [group_name] [@role | role_id]",
+                "Adds a role to an already existing group.",
                 "",
                 Permission.ADMINISTRATOR);
     }
@@ -32,7 +32,7 @@ public class RemoveRole extends BaseCommand {
 
             if (roleId != null) {
 
-                int stat = ActiveDirectoryManagement.removeRole(event.getGuild().getId(), args[0], roleId);
+                int stat = ActiveDirectoryManagement.createRole(event.getGuild().getId(), args[0], roleId);
 
                 if (stat == 0) {
 

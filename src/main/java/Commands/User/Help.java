@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class Help extends BaseCommand {
     public Help() {
-        super("help", new String[] {"halp", "idkwiad"}, "help [command name | command alias]", "Provides information on commands", "", Permission.MESSAGE_SEND);
+        super("help", new String[] {"halp"}, "help [command name | command alias]", "Provides information on commands", "", Permission.MESSAGE_SEND);
     }
 
     @Override

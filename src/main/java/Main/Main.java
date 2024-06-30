@@ -1,13 +1,10 @@
 package Main;
 
-import Commands.Configuration.ActiveDirectory.*;
-import Commands.Configuration.ConfigureBot.SetMutedRole;
-import Commands.Configuration.ConfigureBot.SetPrefix;
-import Commands.Configuration.ConfigureBot.SetPunishmentLogsChannel;
+import Commands.ActiveDirectory.*;
+import Commands.ConfigureBot.*;
 import Commands.Log.*;
 import Commands.Punishments.*;
-import Commands.User.Birthday;
-import Commands.User.Help;
+import Commands.User.*;
 import Events.*;
 import Handlers.CommandHandler;
 
