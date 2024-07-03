@@ -3,6 +3,7 @@ package Main;
 import Commands.ActiveDirectory.*;
 import Commands.ConfigureBot.*;
 import Commands.Log.*;
+import Commands.PunishmentManagement.*;
 import Commands.Punishments.*;
 import Commands.User.*;
 import Events.*;
@@ -69,6 +70,13 @@ public class Main {
         CommandHandler.registerCommand(new SetPunishmentLogsChannel());
         CommandHandler.registerCommand(new Birthday());
         CommandHandler.registerCommand(new RecoverLogs());
+        CommandHandler.registerCommand(new CreatePunishment());
+        CommandHandler.registerCommand(new DeletePunishment());
+        CommandHandler.registerCommand(new CreateTier());
+        CommandHandler.registerCommand(new RemoveTier());
+        CommandHandler.registerCommand(new EditTier());
+        CommandHandler.registerCommand(new RenamePunishment());
+
 
     }
 

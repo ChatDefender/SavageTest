@@ -8,7 +8,7 @@ import static Handlers.SQLHandlers.SQLFunctions.conn;
 
 public class PunishmentManagement {
 
-    public static String createPunishment(String guildId, String punishmentName, int createUserId) {
+    public static String createPunishment(String guildId, String punishmentName, String createUserId) {
         String rtnVal = null;
 
         try {
@@ -20,7 +20,7 @@ public class PunishmentManagement {
                 cstmt.registerOutParameter(1, Types.VARCHAR);
                 cstmt.setString(2, guildId);
                 cstmt.setString(3, punishmentName);
-                cstmt.setInt(4, createUserId);
+                cstmt.setString(4, createUserId);
 
                 cstmt.execute();
                 rtnVal = cstmt.getString(1);
