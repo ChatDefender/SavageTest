@@ -1,7 +1,7 @@
 package Commands.Log;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
@@ -44,7 +44,7 @@ public class RecoverLogs extends BaseCommand {
 
                     }
 
-                    PunishmentManagement.bulkUnarchive(event.getGuild().getId(), isStaff, u.getId());
+                    PunishmentLogManagement.bulkUnarchive(event.getGuild().getId(), isStaff, u.getId());
 
                     event.getChannel().sendMessage("Successfully recovered logs for " + name + "`[" + u.getId() + "]`").queue();
 

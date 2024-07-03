@@ -1,7 +1,7 @@
 package Commands.Log;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -22,15 +22,15 @@ public class DeleteRecord extends BaseCommand {
         } else {
 
             // check if the log exists
-            if (PunishmentManagement.doesLogExists(Integer.parseInt(args[0]))) {
+            if (PunishmentLogManagement.doesLogExists(Integer.parseInt(args[0]))) {
 
-                if (event.getAuthor().getId().equals(PunishmentManagement.getRecordUserId(args[0]))) {
+                if (event.getAuthor().getId().equals(PunishmentLogManagement.getRecordUserId(args[0]))) {
 
                     event.getChannel().sendMessage("You cannot delete your own punishment entry!").queue();
 
                 } else {
 
-                    PunishmentManagement.archiveLog(args[0]);
+                    PunishmentLogManagement.archiveLog(args[0]);
                     event.getChannel().sendMessage("Deleted record #" + args[0]).queue();
 
                 }

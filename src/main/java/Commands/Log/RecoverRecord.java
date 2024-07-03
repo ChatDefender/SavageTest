@@ -1,7 +1,7 @@
 package Commands.Log;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -22,10 +22,10 @@ public class RecoverRecord extends BaseCommand {
         } else {
 
             // check if the log exists
-            if (PunishmentManagement.doesLogExists(Integer.parseInt(args[0]))) {
+            if (PunishmentLogManagement.doesLogExists(Integer.parseInt(args[0]))) {
 
                 // if it does exist, we can archive it
-                PunishmentManagement.unarchive(args[0]);
+                PunishmentLogManagement.unarchive(args[0]);
                 event.getChannel().sendMessage("Recovered record #" + Integer.parseInt(args[0])).queue();
 
             } else {

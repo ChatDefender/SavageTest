@@ -2,7 +2,7 @@ package Events;
 
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.ConfigurationSettings;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 
@@ -40,7 +40,7 @@ public class BotReady extends ListenerAdapter {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                PunishmentManagement.filter(event);
+                PunishmentLogManagement.filter(event);
             }
         };
 

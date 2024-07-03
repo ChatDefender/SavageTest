@@ -1,7 +1,7 @@
 package Commands.Log;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -74,11 +74,11 @@ public class ModLogs extends BaseCommand {
 
             if (isUser) {
 
-                event.getChannel().sendMessage("```"+ PunishmentManagement.getPunishmentLogsForUser(event.getGuild().getId(), userId, punType, showAll) +"```").queue();
+                event.getChannel().sendMessage("```"+ PunishmentLogManagement.getPunishmentLogsForUser(event.getGuild().getId(), userId, punType, showAll) +"```").queue();
 
             } else if (isStaff) {
 
-                event.getChannel().sendMessage("```" + PunishmentManagement.getPunishmentLogsForStaff(event.getGuild().getId(), userId, punType, showAll)).queue();
+                event.getChannel().sendMessage("```" + PunishmentLogManagement.getPunishmentLogsForStaff(event.getGuild().getId(), userId, punType, showAll)).queue();
 
             } else {
 

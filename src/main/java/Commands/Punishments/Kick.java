@@ -2,7 +2,7 @@ package Commands.Punishments;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;
-import Handlers.SQLHandlers.PunishmentManagement;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
@@ -74,7 +74,7 @@ public class Kick extends BaseCommand {
 
                     );
 
-                    int id = PunishmentManagement.insertPunishment(event.getGuild().getId(), userId, event.getAuthor().getId(), pun, "0", finalReason );
+                    int id = PunishmentLogManagement.insertPunishment(event.getGuild().getId(), userId, event.getAuthor().getId(), pun, "0", finalReason );
 
                     String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
 
