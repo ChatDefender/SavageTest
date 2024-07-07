@@ -3,9 +3,13 @@ package Main;
 import Commands.BaseCommand;
 import Handlers.CommandHandler;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
+import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.PunishmentLogManagement;
+import Handlers.SQLHandlers.SQLFunctions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
@@ -14,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,7 +195,7 @@ public class functions {
         }
     }
 
-    public static boolean hasPermissions(Member member, Member target, String GuildId, String commandName) {
+    public static boolean hasPermissions(Member member, String GuildId, String commandName) {
 
         boolean hasPerms;
 
@@ -214,5 +220,166 @@ public class functions {
         return hasPerms;
 
     }
+
+    public static boolean punishUser(SQLFunctions.Punishments punishment, MessageReceivedEvent event, Member member, String reason) {
+
+        AtomicBoolean successful = new AtomicBoolean(false);
+
+        switch (punishment) {
+
+            case BAN:
+
+                event.getGuild().ban(member.getUser(), 0, TimeUnit.SECONDS).reason(reason).queue(
+                        success -> {
+                            event.getChannel().sendMessage("Successfully banned " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue();
+                            successful.set(true);
+                            },
+                        error -> event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
+                );
+                break;
+
+            case MUTE:
+
+                String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
+
+                if (member.getRoles().contains(event.getGuild().getRoleById(muteRoleId))) {
+
+                    event.getChannel().sendMessage("User " + member.getNickname() + " `["+member.getId()+"]` is already muted.").queue();
+
+                } else {
+
+                    event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(muteRoleId)).queue(
+
+                            success -> {
+                                event.getChannel().sendMessage("Successfully muted "+ member.getNickname() + " `["+member.getId()+"]`").queue();
+                                successful.set(true);
+                            },
+                            error -> event.getChannel().sendMessage("There was an error in muting "+ member.getNickname() + " `["+member.getId()+"]`\nError: " + error.getMessage()).queue()
+
+                    );
+
+                }
+
+                break;
+
+            case KICK:
+
+                event.getGuild().kick(member).queue(
+
+                        success -> {
+                            event.getChannel().sendMessage("Successfully kicked " + member.getNickname() + " `[" + member.getId() + "].`").queue();
+                            successful.set(true);
+                        },
+                        error -> event.getChannel().sendMessage("There was an error kicking "+ member.getNickname() + " `[" + member.getId() + "].` Error Message" + error.getMessage()).queue()
+
+                );
+
+                break;
+
+            case WARN:
+
+                break;
+
+            default:
+
+                break;
+
+
+        }
+
+        return successful.get();
+
+
+    }
+
+    public static void executePunishment(SQLFunctions.Punishments pun, MessageReceivedEvent event, String user, String duration, String reason) {
+
+        // Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
+        String userId = functions.getUserId(event, user);
+
+        if (userId == null) {
+
+            event.getChannel().sendMessage("I cannot find the mentioned user!").queue();
+
+        } else {
+
+            // Now that we have an ID, verify it's a guild member
+            Member member = event.getGuild().retrieveMemberById(userId).complete();
+
+            if (member.isOwner()) {
+
+                event.getChannel().sendMessage("I cannot punish the owner of the server.").queue();
+
+            } else {
+
+                long timeInMs = functions.timeToMilliseconds(duration);
+
+                if (timeInMs == -1) {
+
+                    event.getChannel().sendMessage("You provided an invalid time. Available times are as follows:  \n#m - minutes, \n#h - hours, \n#d - days, \n#mon - months, \n#y - year, \nor 0 for permanent.").queue();
+
+                } else {
+
+                    boolean shouldLog = punishUser(pun, event, member, reason);
+
+                    if (shouldLog) {
+
+                        PrivateChannel pc = member.getUser().openPrivateChannel().complete();
+                        if (pc.canTalk()) {
+
+                            pc.sendMessage("```\nPUNISHMENT EXECUTED IN  " + member.getGuild().getName() + "\nPUNISHMENT TYPE: " + pun + "\nModerator: " + event.getAuthor().getName() + "\nDuration: " + duration + "\nReason: " + reason + "\n```").queue();
+
+                        } else {
+
+                            event.getChannel().sendMessage("Failed to send user a private message: User is not accepting private messages").queue();
+
+                        }
+
+
+                        int id = PunishmentLogManagement.insertPunishment(event.getGuild().getId(), userId, event.getAuthor().getId(), pun, String.valueOf(timeInMs), reason);
+
+                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
+
+                        if (punishmentLogChannelId != null) {
+
+                            TextChannel tc = event.getGuild().getTextChannelById(punishmentLogChannelId);
+                            if (tc != null && tc.canTalk()) {
+
+                                tc.sendMessage("```\nPUNISHMENT EXECUTED: " + pun + " " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " + event.getAuthor().getName() + "\nReason: " + reason + "\nPunishmentId: " + id + "```").queue();
+
+                            } else {
+
+                                event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
+
+                            }
+
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+    public static void muteUser() {
+
+
+    }
+
+    public static void kickUser() {
+
+
+    }
+
+    public static void warnUser() {
+
+
+    }
+
+
+
+
 
 }

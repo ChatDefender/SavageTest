@@ -50,7 +50,7 @@ public class MessageEvent extends ListenerAdapter {
 
                         if (CommandHandler.doesCommandExist(command)) {
 
-                            boolean hasPerms = functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getMember(), event.getGuild().getId(), command);
+                            boolean hasPerms = functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getGuild().getId(), command);
 
                             if (hasPerms) {
 

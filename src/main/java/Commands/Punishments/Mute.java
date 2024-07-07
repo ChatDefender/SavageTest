@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import static Main.functions.executePunishment;
+
 public class Mute extends BaseCommand {
 
     public Mute() {
@@ -26,6 +28,8 @@ public class Mute extends BaseCommand {
 
         } else {
 
+
+
             String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
 
             if (muteRoleId.isEmpty()) {
@@ -38,98 +42,15 @@ public class Mute extends BaseCommand {
 
             } else {
 
-
-                SQLFunctions.Punishments pun = SQLFunctions.Punishments.MUTE;
-
-                // Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
-                String userId = functions.getUserId(event, args[0]);
-
-                if (userId == null) {
-
-                    event.getChannel().sendMessage("I cannot find the mentioned user!").queue();
-
-                } else {
-
-                    // Now that we have an ID, verify it's a guild member
-                    Member member = event.getGuild().retrieveMemberById(userId).complete();
-
-                    if (member.isOwner()) {
-
-                        event.getChannel().sendMessage("I cannot punish the owner of the server.").queue();
-
-                    } else {
-
-                        // Convert the duration argument into ms.
-                        String duration = args[1];
-                        long timeInMs = functions.timeToMilliseconds(duration);
-
-                        if (timeInMs == -1) {
-
-                            event.getChannel().sendMessage("You provided an invalid time. Available times are as follows:  \n#m - minutes, \n#h - hours, \n#d - days, \n#mon - months, \n#y - year, \nor 0 for permanent.").queue();
-
-                        } else {
-
-                            // convert the rest of the arguments into a string
-                            StringBuilder reason = new StringBuilder();
-                            for (int i = 2; i < args.length; i++) {
-
-                                reason.append(args[i]).append(" ");
-
-                            }
-
-                            String finalReason = reason.toString();
-
-                            if (member.getRoles().contains(event.getGuild().getRoleById(muteRoleId))) {
-
-                                event.getChannel().sendMessage("User " + member.getNickname() + " `["+member.getId()+"]` is already muted.").queue();
-
-                            } else {
-
-                                event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(muteRoleId)).queue(
-
-                                        success -> event.getChannel().sendMessage("Successfully muted "+ member.getNickname() + " `["+member.getId()+"]`").queue(),
-                                        error -> event.getChannel().sendMessage("There was an error in muting "+ member.getNickname() + " `["+member.getId()+"]`\nError: " + error.getMessage()).queue()
-
-                                );
-
-                                PrivateChannel pc = member.getUser().openPrivateChannel().complete();
-
-                                if (pc.canTalk()) {
-
-                                    pc.sendMessage("```\nPUNISHMENT EXECUTED IN  " + member.getGuild().getName() + "\nPUNISHMENT TYPE: " + pun + "\nModerator: " + event.getAuthor().getName() + "\nDuration: " + duration + "\nReason: " + finalReason + "\n```").queue();
-
-                                } else {
-
-                                    event.getChannel().sendMessage("Failed to send user a private message: User is not accepting private messages").queue();
-
-                                }
-
-                                int id = PunishmentLogManagement.insertPunishment(event.getGuild().getId(), userId, event.getAuthor().getId(), pun, String.valueOf(timeInMs), finalReason );
-
-                                String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
-
-                                if (punishmentLogChannelId != null) {
-
-                                    TextChannel tc = event.getGuild().getTextChannelById(punishmentLogChannelId);
-                                    if (tc != null && tc.canTalk()) {
-
-                                        tc.sendMessage("```\nPUNISHMENT EXECUTED: "+ pun + " " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " +event.getAuthor().getName() + "\nReason: " + finalReason + "\nPunishmentId: "+id+"```" ).queue();
-
-                                    } else {
-
-                                        event.getChannel().sendMessage("I cannot find the punishment log channel, or I may not have permissions to view/send messages.").queue();
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
+                String user = args[0];
+                String duration = args[1];
+                StringBuilder reason = new StringBuilder();
+                for (int i = 2; i < args.length; i++) {
+                    reason.append(args[i]).append(" ");
                 }
+                String finalReason = reason.toString();
+
+                executePunishment(SQLFunctions.Punishments.MUTE, event, user, duration, finalReason);
 
             }
 
