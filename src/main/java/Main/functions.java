@@ -14,6 +14,10 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,19 +60,59 @@ public class functions {
         }
     }
 
+//    public static long timeToMilliseconds(String duration) {
+//
+//        Pattern pattern = Pattern.compile("(\\d+)(?:m|h|d|mon|yr|dur)");
+//        Matcher matcher = pattern.matcher(duration.trim());
+//
+//        System.out.println(duration);
+//
+//        if (!matcher.matches()) {
+//
+//            return -1;
+//
+//        }
+//
+//        long timeValue = Long.parseLong(matcher.group(1));
+//        String unit = matcher.group(2);
+//
+//        System.out.println(timeValue + " " + unit);
+//
+//        switch (unit) {
+//            case "m":
+//                return timeValue * 60L * 1000L;
+//            case "h":
+//                return timeValue * 60L * 60L * 1000L;
+//            case "d":
+//                return timeValue * 24L * 60L * 60L * 1000L;
+//            case "mon":
+//                return timeValue * 30L * 24L * 60L * 60L * 1000L;
+//            case "yr":
+//                return timeValue * 365L * 24L * 60L * 60L * 1000L;
+//            case "dur":
+//                return timeValue;
+//            default:
+//                return -1;
+//        }
+//
+//    }
+
     public static long timeToMilliseconds(String duration) {
 
-        Pattern pattern = Pattern.compile("(\\d+)([m|h|d|mon|yr])");
+        Pattern pattern = Pattern.compile("(\\d+)(mon|dur|yr|d|h|m)");
         Matcher matcher = pattern.matcher(duration.trim());
 
-        if (!matcher.matches()) {
+        System.out.println("Input Duration: " + duration);
 
+        if (!matcher.find()) {
+            System.out.println("No match found.");
             return -1;
-
         }
 
         long timeValue = Long.parseLong(matcher.group(1));
         String unit = matcher.group(2);
+
+        System.out.println("Parsed: " + timeValue + " " + unit);
 
         switch (unit) {
             case "m":
@@ -81,11 +125,13 @@ public class functions {
                 return timeValue * 30L * 24L * 60L * 60L * 1000L;
             case "yr":
                 return timeValue * 365L * 24L * 60L * 60L * 1000L;
+            case "dur":
+                return timeValue;
             default:
                 return -1;
         }
-
     }
+
 
     public static String buildHelpBlock(String commandNameOrAliases) {
 
@@ -151,7 +197,7 @@ public class functions {
 
         try {
 
-            Member m = event.getGuild().retrieveMemberById(args).complete();
+            Member m = event.getGuild().retrieveMemberById(args.replace("<@", "").replace(">", "")).complete();
 
             if (m != null) {
 
@@ -220,79 +266,159 @@ public class functions {
         return hasPerms;
 
     }
+//
+//    public static boolean punishUser(SQLFunctions.Punishments punishment, MessageReceivedEvent event, Member member, String reason) {
+//
+//        AtomicBoolean successful = new AtomicBoolean(false);
+//
+//        switch (punishment) {
+//
+//            case BAN:
+//
+//                event.getGuild().ban(member.getUser(), 0, TimeUnit.SECONDS).reason(reason).queue(
+//                        success -> {
+//                            event.getChannel().sendMessage("Successfully banned " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue();
+//                            successful.set(true);
+//                            },
+//                        error -> event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
+//                );
+//                break;
+//
+//            case MUTE:
+//
+//                String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
+//
+//                if (member.getRoles().contains(event.getGuild().getRoleById(muteRoleId))) {
+//
+//                    event.getChannel().sendMessage("User " + member.getNickname() + " `["+member.getId()+"]` is already muted.").queue();
+//
+//                } else {
+//
+//                    event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(muteRoleId)).queue(
+//
+//                            success -> {
+//                                event.getChannel().sendMessage("Successfully muted "+ member.getEffectiveName() + " `["+member.getId()+"]`").queue();
+//                                successful.set(true);
+//                            },
+//                            error -> event.getChannel().sendMessage("There was an error in muting "+ member.getNickname() + " `["+member.getId()+"]`\nError: " + error.getMessage()).queue()
+//
+//                    );
+//
+//                }
+//
+//                break;
+//
+//            case KICK:
+//
+//                event.getGuild().kick(member).queue(
+//
+//                        success -> {
+//                            event.getChannel().sendMessage("Successfully kicked " + member.getNickname() + " `[" + member.getId() + "].`").queue();
+//                            successful.set(true);
+//                        },
+//                        error -> event.getChannel().sendMessage("There was an error kicking "+ member.getNickname() + " `[" + member.getId() + "].` Error Message" + error.getMessage()).queue()
+//
+//                );
+//
+//                break;
+//
+//            case WARN:
+//
+//                break;
+//
+//            default:
+//
+//                break;
+//
+//
+//        }
+//
+//        System.out.println((successful.get()));
+//
+//        return successful.get();
+//
+//
+//    }
 
     public static boolean punishUser(SQLFunctions.Punishments punishment, MessageReceivedEvent event, Member member, String reason) {
 
         AtomicBoolean successful = new AtomicBoolean(false);
+        CountDownLatch latch = new CountDownLatch(1);
 
         switch (punishment) {
-
             case BAN:
-
                 event.getGuild().ban(member.getUser(), 0, TimeUnit.SECONDS).reason(reason).queue(
                         success -> {
                             event.getChannel().sendMessage("Successfully banned " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue();
                             successful.set(true);
-                            },
-                        error -> event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage() ).queue()
+                            latch.countDown();
+                        },
+                        error -> {
+                            event.getChannel().sendMessage("Failed to ban " + member.getEffectiveName() + " `[" + member.getId() + "]`. Reason: " + error.getMessage()).queue();
+                            latch.countDown();
+                        }
                 );
                 break;
 
             case MUTE:
-
                 String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
 
                 if (member.getRoles().contains(event.getGuild().getRoleById(muteRoleId))) {
-
-                    event.getChannel().sendMessage("User " + member.getNickname() + " `["+member.getId()+"]` is already muted.").queue();
-
+                    event.getChannel().sendMessage("User " + member.getNickname() + " `[" + member.getId() + "]` is already muted.").queue();
+                    latch.countDown();
                 } else {
-
                     event.getGuild().addRoleToMember(member, event.getGuild().getRoleById(muteRoleId)).queue(
-
                             success -> {
-                                event.getChannel().sendMessage("Successfully muted "+ member.getNickname() + " `["+member.getId()+"]`").queue();
+                                event.getChannel().sendMessage("Successfully muted " + member.getEffectiveName() + " `[" + member.getId() + "]`").queue();
                                 successful.set(true);
+                                latch.countDown();
                             },
-                            error -> event.getChannel().sendMessage("There was an error in muting "+ member.getNickname() + " `["+member.getId()+"]`\nError: " + error.getMessage()).queue()
-
+                            error -> {
+                                event.getChannel().sendMessage("There was an error in muting " + member.getNickname() + " `[" + member.getId() + "]`\nError: " + error.getMessage()).queue();
+                                latch.countDown();
+                            }
                     );
-
                 }
-
                 break;
 
             case KICK:
-
                 event.getGuild().kick(member).queue(
-
                         success -> {
-                            event.getChannel().sendMessage("Successfully kicked " + member.getNickname() + " `[" + member.getId() + "].`").queue();
+                            event.getChannel().sendMessage("Successfully kicked " + member.getNickname() + " `[" + member.getId() + "]`.").queue();
                             successful.set(true);
+                            latch.countDown();
                         },
-                        error -> event.getChannel().sendMessage("There was an error kicking "+ member.getNickname() + " `[" + member.getId() + "].` Error Message" + error.getMessage()).queue()
-
+                        error -> {
+                            event.getChannel().sendMessage("There was an error kicking " + member.getNickname() + " `[" + member.getId() + "]`. Error Message: " + error.getMessage()).queue();
+                            latch.countDown();
+                        }
                 );
-
                 break;
 
             case WARN:
-
+                // Set to true since WARN is considered successful
+                successful.set(true);
+                latch.countDown();
                 break;
 
             default:
-
+                latch.countDown();
                 break;
+        }
 
-
+        try {
+            latch.await(); // Wait until latch is counted down (operation completes)
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
         }
 
         return successful.get();
-
-
     }
 
     public static void executePunishment(SQLFunctions.Punishments pun, MessageReceivedEvent event, String user, String duration, String reason) {
+
+        System.out.println(pun);
 
         // Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
         String userId = functions.getUserId(event, user);
@@ -314,6 +440,8 @@ public class functions {
 
                 long timeInMs = functions.timeToMilliseconds(duration);
 
+                System.out.println(timeInMs + " " + duration);
+
                 if (timeInMs == -1) {
 
                     event.getChannel().sendMessage("You provided an invalid time. Available times are as follows:  \n#m - minutes, \n#h - hours, \n#d - days, \n#mon - months, \n#y - year, \nor 0 for permanent.").queue();
@@ -324,17 +452,9 @@ public class functions {
 
                     if (shouldLog) {
 
-                        PrivateChannel pc = member.getUser().openPrivateChannel().complete();
-                        if (pc.canTalk()) {
-
-                            pc.sendMessage("```\nPUNISHMENT EXECUTED IN  " + member.getGuild().getName() + "\nPUNISHMENT TYPE: " + pun + "\nModerator: " + event.getAuthor().getName() + "\nDuration: " + duration + "\nReason: " + reason + "\n```").queue();
-
-                        } else {
-
-                            event.getChannel().sendMessage("Failed to send user a private message: User is not accepting private messages").queue();
-
-                        }
-
+                        event.getJDA().retrieveUserById(member.getId()).complete().openPrivateChannel().queue(
+                                channel -> channel.sendMessage("```\nPUNISHMENT EXECUTED IN  " + member.getGuild().getName() + "\nPUNISHMENT TYPE: " + pun + "\nModerator: " + event.getAuthor().getName() + "\nDuration: " + duration + "\nReason: " + reason + "\n```").queue()
+                        );
 
                         int id = PunishmentLogManagement.insertPunishment(event.getGuild().getId(), userId, event.getAuthor().getId(), pun, String.valueOf(timeInMs), reason);
 
@@ -343,7 +463,7 @@ public class functions {
                         if (punishmentLogChannelId != null) {
 
                             TextChannel tc = event.getGuild().getTextChannelById(punishmentLogChannelId);
-                            if (tc != null && tc.canTalk()) {
+                            if (tc != null) {
 
                                 tc.sendMessage("```\nPUNISHMENT EXECUTED: " + pun + " " + member.getGuild().getName() + "\nUser: " + member.getEffectiveName() + " \nModerator: " + event.getAuthor().getName() + "\nReason: " + reason + "\nPunishmentId: " + id + "```").queue();
 

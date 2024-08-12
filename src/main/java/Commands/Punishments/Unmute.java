@@ -50,7 +50,7 @@ public class Unmute extends BaseCommand {
                     // Now that we have an ID, verify it's a guild member
                     Member member = event.getGuild().retrieveMemberById(userId).complete();
 
-                    if (event.getGuild().getMember(member).getRoles().contains(r)) {
+                    if (event.getGuild().retrieveMemberById(member.getId()).complete().getRoles().contains(r)) {
 
                         event.getGuild().removeRoleFromMember(member, r).queue();
 

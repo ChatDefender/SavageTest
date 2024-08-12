@@ -1,5 +1,7 @@
 package Handlers.SQLHandlers;
 
+import org.json.JSONObject;
+
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -55,7 +57,7 @@ public class PunishmentManagement {
         return rtnVal;
     }
 
-    public static String createTier(String guildId, String punishmentName, String punishmentType, int duration) {
+    public static String createTier(String guildId, String punishmentName, String punishmentType, long duration) {
         String rtnVal = null;
 
         try {
@@ -68,7 +70,7 @@ public class PunishmentManagement {
                 cstmt.setString(2, guildId);
                 cstmt.setString(3, punishmentName);
                 cstmt.setString(4, punishmentType);
-                cstmt.setInt(5, duration);
+                cstmt.setLong(5, duration);
 
                 cstmt.execute();
                 rtnVal = cstmt.getString(1);
@@ -152,6 +154,72 @@ public class PunishmentManagement {
         }
 
         return rtnVal;
+    }
+
+    public static int doesPunishmentExist(String guildId, String punishmentName) {
+
+        punishmentName = punishmentName.toUpperCase();
+
+        int rtnVal = 0;
+
+        try {
+            SQLFunctions.verifyConnection();
+
+            String procCall = "{ ? = call punishment_management.does_punishment_exist(?, ?) }";
+
+            try (CallableStatement cstmt = conn.prepareCall(procCall)) {
+                cstmt.registerOutParameter(1, Types.VARCHAR);
+                cstmt.setString(2, guildId);
+                cstmt.setString(3, punishmentName);
+
+                cstmt.execute();
+                rtnVal = cstmt.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rtnVal;
+
+    }
+
+    public static JSONObject addActivePunishment(String guildId, String userId, String punishmentName) {
+
+        punishmentName = punishmentName.toUpperCase(); // Ensure punishment name is uppercase
+
+        JSONObject resultJson = new JSONObject();
+
+        try {
+            // Assuming you have a method that verifies and returns a valid DB connection
+            SQLFunctions.verifyConnection();
+
+            String procCall = "{ ? = call punishment_management.add_active_punishment(?, ?, ?) }";
+
+            try (CallableStatement cstmt = conn.prepareCall(procCall)) {
+                // Register the return type (CLOB in this case)
+                cstmt.registerOutParameter(1, Types.CLOB);
+
+                // Set the input parameters for the PL/SQL function
+                cstmt.setString(2, guildId);
+                cstmt.setString(3, userId);
+                cstmt.setString(4, punishmentName);
+
+                // Execute the function
+                cstmt.execute();
+
+                // Get the return value (CLOB)
+                String jsonResult = cstmt.getString(1);
+
+                // Convert the JSON string to JSONObject
+                resultJson = new JSONObject(jsonResult);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            resultJson.put("errorMessage", "Error: " + e.getMessage()); // Return the error message if an exception occurs
+        }
+
+        return resultJson;
     }
 
 }

@@ -17,13 +17,16 @@ public class EditTier extends BaseCommand {
         if (args.length != 4) {
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
         } else {
+
+            String newValueFormat = args[2].equalsIgnoreCase("punishment_type") ? args[3] : String.valueOf(functions.timeToMilliseconds(args[3]));
+
             String guildId = event.getGuild().getId();
             String result = PunishmentManagement.editTier(
                     guildId,         // guildId
                     args[0],         // punishmentName
                     Integer.parseInt(args[1]),  // punishmentTier
                     args[2],         // columnName
-                    args[3]          // newValue
+                    newValueFormat          // newValue
             );
 
             event.getChannel().sendMessage("Edit Tier Result: " + result).queue();

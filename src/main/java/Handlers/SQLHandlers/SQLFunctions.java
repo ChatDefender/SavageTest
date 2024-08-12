@@ -16,7 +16,7 @@ public class SQLFunctions {
 
     public enum Settings {
 
-        PREFIX, MUTEDROLEID, PUNISHMENTLOGID
+        PREFIX, MUTEDROLEID, PUNISHMENTLOGID, PUNISH_RESET
 
     }
 

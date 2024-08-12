@@ -24,6 +24,9 @@ public class DeletePunishment extends BaseCommand {
             );
 
             event.getChannel().sendMessage("Delete Punishment Result: " + result).queue();
+
         }
+
     }
+
 }

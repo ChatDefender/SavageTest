@@ -77,6 +77,7 @@ public class Main {
         CommandHandler.registerCommand(new EditTier());
         CommandHandler.registerCommand(new RenamePunishment());
         CommandHandler.registerCommand(new Punish());
+        CommandHandler.registerCommand(new SetPunishReset());
 
     }
 
