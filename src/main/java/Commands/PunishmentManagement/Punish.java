@@ -1,11 +1,9 @@
 package Commands.PunishmentManagement;
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.PunishmentManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
@@ -17,65 +15,70 @@ public class Punish extends BaseCommand {
 
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
+        if (args.length != 2) {
 
-        // validate punishment
-        String user = functions.verifyMember(event, args[0]);
-        String punishment = args[1].toUpperCase();
+            event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
 
-        if (PunishmentManagement.doesPunishmentExist(event.getGuild().getId(), punishment) == 1) {
+        } else {
+            // validate punishment
+            String user = functions.verifyMember(event, args[0]);
+            String punishment = args[1].toUpperCase();
 
-            // check if they have permissions for this
-            if (functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getGuild().getId(), punishment)) {
+            if (PunishmentManagement.doesPunishmentExist(event.getGuild().getId(), punishment) == 1) {
 
-                // if valid, execute punishment with associated time
-                JSONObject results = PunishmentManagement.addActivePunishment(event.getGuild().getId(), user, punishment);
+                // check if they have permissions for this
+                if (functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getGuild().getId(), punishment)) {
 
-                String punishmentType = "ALL";
-                String time = "-1";
-                String err = null;
+                    // if valid, execute punishment with associated time
+                    JSONObject results = PunishmentManagement.addActivePunishment(event.getGuild().getId(), user, punishment);
 
-                try {
+                    String punishmentType = "ALL";
+                    String time = "-1";
+                    String err = null;
+
                     try {
-                        err = results.getString("errorMessage");
-                    } catch (Exception e) {
-                        // Log that errorMessage was not present
-                        System.out.println("No errorMessage field found or could not be retrieved.");
-                    }
-
-                    // If there's an error message, print it
-                    if (err != null && !err.isEmpty()) {
-                        event.getChannel().sendMessage("There was an error with this request: " + err).queue();
-                    } else {
                         try {
-                            punishmentType = results.getString("punishmentType");
-                            time = results.getString("punishmentTime");
-
-                            System.out.println("Punishment Type: " + punishmentType);
-                            System.out.println("Punishment Time: " + time);
+                            err = results.getString("errorMessage");
                         } catch (Exception e) {
-                            // Log that punishmentType or punishmentTime was not present
-                            System.out.println("Punishment information could not be retrieved.");
+                            // Log that errorMessage was not present
+                            System.out.println("No errorMessage field found or could not be retrieved.");
                         }
+
+                        // If there's an error message, print it
+                        if (err != null && !err.isEmpty()) {
+                            event.getChannel().sendMessage("There was an error with this request: " + err).queue();
+                        } else {
+                            try {
+                                punishmentType = results.getString("punishmentType");
+                                time = results.getString("punishmentTime");
+
+                                System.out.println("Punishment Type: " + punishmentType);
+                                System.out.println("Punishment Time: " + time);
+                            } catch (Exception e) {
+                                // Log that punishmentType or punishmentTime was not present
+                                System.out.println("Punishment information could not be retrieved.");
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Handle any other SQLExceptions that might occur
+                        System.out.println("An error occurred while processing the results: " + e.getMessage());
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    // Handle any other SQLExceptions that might occur
-                    System.out.println("An error occurred while processing the results: " + e.getMessage());
-                    e.printStackTrace();
+
+
+                    functions.executePunishment(SQLFunctions.Punishments.valueOf(punishmentType.toUpperCase()), event, user, time + "dur", "Automated punishment system - reason generated by default. Punishment issued: " + punishment);
+
+                } else {
+
+                    event.getChannel().sendMessage("You do not have permissions to use this punishment").queue();
+
                 }
-
-
-
-                functions.executePunishment(SQLFunctions.Punishments.valueOf(punishmentType.toUpperCase()), event, user, time+"dur","Automated punishment system - reason generated by default. Punishment issued: "+punishment);
 
             } else {
 
-                event.getChannel().sendMessage("You do not have permissions to use this punishment").queue();
+                event.getChannel().sendMessage("That punishment does not exist.").queue();
 
             }
-
-        } else {
-
-            event.getChannel().sendMessage("That punishment does not exist.").queue();
 
         }
 

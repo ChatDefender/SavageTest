@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class SetPunishReset extends BaseCommand {
 
     public SetPunishReset() {
-        super("setpunishreset", new String[] {} , "setpunishreset [new time]", "Sets the time of which punishments should be restarted after their duration - default is 24 hours.", "", Permission.ADMINISTRATOR);
+        super("setpunishreset", new String[] {} , "setpunishreset [new time]", "When punishments should reset - default is 24h", "", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -4,7 +4,6 @@ import Commands.BaseCommand;
 import Handlers.CommandHandler;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.PunishmentManagement;
-import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -17,7 +16,7 @@ public class AddCommand extends BaseCommand {
         super("addcommand",
                 new String[] {  },
                 "addCommand [group_name] [@role | role_id] [command_name]",
-                "Adds command to a role for a specified group. Note: group_name, and role_id should already exist.",
+                "Adds command to a role for a specified group.",
                 "",
                 Permission.ADMINISTRATOR);
     }
