@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishment;
+import static Handlers.SQLHandlers.PunishmentLogManagement.markPunishmentAsServed;
+
 public class Unmute extends BaseCommand {
 
 
@@ -58,6 +61,9 @@ public class Unmute extends BaseCommand {
                         pc.sendMessage("```\nUNMUTED IN " + member.getGuild().getName() + "\nModerator: " + event.getAuthor().getName() + "```").queue();
 
                         event.getChannel().sendMessage("Successfully unmuted " + member.getEffectiveName()).queue();
+
+                        insertPunishment(event.getGuild().getId(), member.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNMUTE, "0", "Manual unmute performed by staff.");
+                        markPunishmentAsServed(member.getId(), SQLFunctions.Punishments.UNMUTE);
 
                         String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
 

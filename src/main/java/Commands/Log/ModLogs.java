@@ -11,7 +11,7 @@ public class ModLogs extends BaseCommand {
 
     public ModLogs() {
 
-        super("modlogs", new String[] {"modlog"}, "modlog {@user | user id} {-u(ser) | -s(taff)} {punishment type} {-a(rchived) | -sa(show all)}", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", Permission.ADMINISTRATOR);
+        super("modlogs", new String[] {"modlog", "punlog"}, "modlog [@user | user id] [-user | -staff] [punishment type] (-archived)", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", Permission.ADMINISTRATOR);
 
     }
 
@@ -24,15 +24,15 @@ public class ModLogs extends BaseCommand {
 
         } else {
 
-            // Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
+            /// Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
             String userId = args[0];
             userId = userId.replace("<@", "").replace(">", "");
 
-            // determine if it is staff or is user
+            // Determine if it is staff or user
             boolean isUser = args[1].equalsIgnoreCase("-u") || args[1].equalsIgnoreCase("-user");
             boolean isStaff = args[1].equalsIgnoreCase("-s") || args[1].equalsIgnoreCase("-staff");
 
-            // determine the punishment type
+            // Determine the punishment type
             SQLFunctions.Punishments punType;
 
             String suppliedPunType = args[2].toLowerCase();
@@ -41,49 +41,57 @@ public class ModLogs extends BaseCommand {
                 case "mute":
                     punType = SQLFunctions.Punishments.MUTE;
                     break;
-
                 case "ban":
                     punType = SQLFunctions.Punishments.BAN;
                     break;
-
                 case "warn":
                     punType = SQLFunctions.Punishments.WARN;
                     break;
-
                 case "kick":
                     punType = SQLFunctions.Punishments.KICK;
                     break;
-
                 case "all":
                     punType = SQLFunctions.Punishments.ALL;
                     break;
-
+                case "unmute":
+                    punType = SQLFunctions.Punishments.UNMUTE;
+                    break;
+                case "unban":
+                    punType = SQLFunctions.Punishments.UNBAN;
+                    break;
                 default:
                     punType = SQLFunctions.Punishments.ALL;
-
+                    break;
             }
 
-            // determine show all or archive
-
-            boolean showAll = false;
+            // Determine whether to show all or archived logs
+            boolean isArchived = false;
             if (args.length == 4) {
-
-                showAll = args[3].equalsIgnoreCase("-sa") || args[3].equalsIgnoreCase("-showall");
-
+                isArchived = args[3].equalsIgnoreCase("-a") || args[3].equalsIgnoreCase("-archive");
             }
 
-            if (isUser) {
+            if (isUser || isStaff) {
+                // Use the unified method to get punishment logs
+                String result = PunishmentLogManagement.getPunishmentLogs(
+                        event.getGuild().getId(),
+                        userId,
+                        isStaff, // Use isStaff to determine if it's for a staff member
+                        punType,
+                        isArchived
+                );
 
-                event.getChannel().sendMessage("```"+ PunishmentLogManagement.getPunishmentLogsForUser(event.getGuild().getId(), userId, punType, showAll) +"```").queue();
+                // Send the result as a message
+                if (result.startsWith("PL_")) {
 
-            } else if (isStaff) {
 
-                event.getChannel().sendMessage("```" + PunishmentLogManagement.getPunishmentLogsForStaff(event.getGuild().getId(), userId, punType, showAll)).queue();
 
+                } else {
+
+                    event.getChannel().sendMessage(result).queue();
+
+                }
             } else {
-
-                event.getChannel().sendMessage("Please specify a -user or -staff records to look up!").queue();
-
+                event.getChannel().sendMessage("Please specify whether to look up -user or -staff records!").queue();
             }
 
 

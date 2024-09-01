@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
+import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishment;
+import static Handlers.SQLHandlers.PunishmentLogManagement.markPunishmentAsServed;
+
 public class Unban extends BaseCommand {
 
     public Unban() {
@@ -55,10 +58,17 @@ public class Unban extends BaseCommand {
 
                         event.getGuild().unban(user).queue(
 
-                                success -> event.getChannel().sendMessage("Successfully unbanned " + user.getName()).queue(),
+                                success -> {
+                                    event.getChannel().sendMessage("Successfully unbanned " + user.getName()).queue();
+                                    insertPunishment(event.getGuild().getId(), user.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNBAN, "0", "Manual unban performed by staff.");
+                                    markPunishmentAsServed(user.getId(), SQLFunctions.Punishments.BAN);
+
+                                },
                                 error -> event.getChannel().sendMessage("Failed to unban user: " + error.getMessage()).queue()
 
                         );
+
+
 
                         String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
 

@@ -33,7 +33,7 @@ public class RemoveCommand extends BaseCommand {
 
             if (roleId != null) {
 
-                int stat = ActiveDirectoryManagement.removeRoleCommand(event.getGuild().getId(), args[0], roleId, CommandHandler.getCommand(args[2]).getName());
+                int stat = ActiveDirectoryManagement.removeRoleCommand(event.getGuild().getId(), args[0], roleId, CommandHandler.getCommand(args[2].toLowerCase()).getName());
 
                 if (stat == 0) {
 

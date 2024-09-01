@@ -28,19 +28,68 @@ public class PunishmentLogManagement {
 
                     Guild guild = event.getJDA().getGuildById(resultSet.getString("GuildId"));
                     User user = event.getJDA().retrieveUserById(resultSet.getString("UserID")).complete();
+                    String punishmentType = resultSet.getString("PunishmentType");
                     Role muteRole = event.getJDA().getRoleById(ConfigurationSettings.getSetting(resultSet.getString("GuildId"), SQLFunctions.Settings.MUTEDROLEID));
 
                     while (resultSet.next()) {
 
-                        if (resultSet.getString("PunishmentType").equalsIgnoreCase("mute")) {
+                        if (punishmentType.equalsIgnoreCase("mute")) {
                             guild.removeRoleFromMember(user, muteRole).queue();
                         } else {
                             guild.unban(user).queue();
                         }
+
+                        insertPunishment(guild.getId(), user.getId(), guild.getSelfMember().getId(), punishmentType.equalsIgnoreCase("mute") ? SQLFunctions.Punishments.UNMUTE : SQLFunctions.Punishments.UNBAN, "0", "Automated Punishment System Action - Time served");
+
+                        markPunishmentAsServed(resultSet.getInt("PunishmentLogId"));
+
                     }
 
                 }
+
             }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+
+    private static void markPunishmentAsServed(int punishmentLogId) {
+
+        try  {
+
+            SQLFunctions.verifyConnection();
+
+            String sql = "UPDATE punishment_logs SET is_served = 1 WHERE punishmentlogid = ?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, punishmentLogId);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+        }
+    }
+
+    public static void markPunishmentAsServed(String userId, SQLFunctions.Punishments punType) {
+
+        try {
+
+            SQLFunctions.verifyConnection();
+
+            String sql = "UPDATE punishment_logs SET is_served = 1 WHERE UserId = ? AND PunishmentType = ?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, userId);
+            stmt.setString(2, String.valueOf(punType));
+
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
 
@@ -309,122 +358,33 @@ public class PunishmentLogManagement {
 
     }
 
-    public static String getPunishmentLogsForUser(String GuildId, String UserId, SQLFunctions.Punishments punType, boolean showAll) {
-
+    public static String getPunishmentLogs(String GuildId, String userId, boolean isStaff, SQLFunctions.Punishments punType, boolean isArchived) {
         String functionCall;
-
-        if (showAll && punType.equals(SQLFunctions.Punishments.ALL)) {
-            // if show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_log_management.GETPUNISHMENTLOGSFORUSER(?, ?)}";
-        } else if (showAll) {
-            // If show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_log_management.GETPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
-        } else if(punType.equals(SQLFunctions.Punishments.ALL)) {
-            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTLOGSFORUSER(?, ?)}";
-        } else {
-            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTTYPELOGSFORUSER(?, ?, ?)}";
-        }
-
         String rtnVal = null;
 
         try {
-
             SQLFunctions.verifyConnection();
 
+            functionCall = "{? = call generatePunishmentLogsFile_function(?, ?, ?, ?, ?)}";
+
             try (CallableStatement cstmt = conn.prepareCall(functionCall)) {
-
-                cstmt.registerOutParameter( 1, Types.CLOB);
-
-                cstmt.setString(2, GuildId);
-                cstmt.setString(3, UserId);
-
-                int count = 0;
-                for(int i = 0; i < functionCall.length(); i++) {
-
-                    if (functionCall.charAt(i) == '?')
-                        count++;
-
-                }
-
-                if (count == 4) {
-
-                    cstmt.setString(4, punType.toString());
-
-                }
+                cstmt.registerOutParameter(1, Types.VARCHAR);
+                cstmt.setString(2, userId);
+                cstmt.setString(3, GuildId);
+                cstmt.setInt(4, isStaff ? 1 : 0);
+                cstmt.setString(5, !punType.equals(SQLFunctions.Punishments.ALL) ? punType.toString() : null);
+                cstmt.setInt(6, isArchived ? 1 : 0);
 
                 cstmt.execute();
-
                 rtnVal = cstmt.getString(1);
 
             }
 
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-            System.out.println("SQLState: " + e.getSQLState());
-            System.out.println("VendorError: " + e.getErrorCode());
-            e.printStackTrace();
-        }
-
-
-        return rtnVal;
-    }
-
-    public static String getPunishmentLogsForStaff(String GuildId, String StaffId, SQLFunctions.Punishments punType, boolean showAll) {
-
-        String functionCall;
-
-        if (showAll && punType.equals(SQLFunctions.Punishments.ALL)) {
-            // if show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_log_management.GETPUNISHMENTLOGSFORSTAFF(?, ?)}";
-        } else if (showAll) {
-            // If show all, we do not care about the isArchived
-            functionCall = "{? = call punishment_log_management.GETPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
-        } else if(punType.equals(SQLFunctions.Punishments.ALL)) {
-            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTLOGSFORSTAFF(?, ?)}";
-        } else {
-            functionCall = "{? = call punishment_log_management.GETARCHIVEDPUNISHMENTTYPELOGSFORSTAFF(?, ?, ?)}";
-        }
-
-        String rtnVal = null;
-
-        try {
-
-            SQLFunctions.verifyConnection();
-
-            try (CallableStatement cstmt = conn.prepareCall(functionCall)) {
-
-                cstmt.registerOutParameter( 1, Types.VARCHAR);
-
-                cstmt.setString(2, GuildId);
-                cstmt.setString(3, StaffId);
-
-                int count = 0;
-                for(int i = 0; i < functionCall.length(); i++) {
-
-                    if (functionCall.charAt(i) == '?')
-                        count++;
-
-                }
-
-                if (count == 4) {
-
-                    cstmt.setString(4, punType.toString());
-
-                }
-
-                cstmt.execute();
-
-                rtnVal = cstmt.getString(1);
-
-            }
 
         } catch (SQLException e) {
-
             e.printStackTrace();
-
         }
 
         return rtnVal;
     }
-
 }

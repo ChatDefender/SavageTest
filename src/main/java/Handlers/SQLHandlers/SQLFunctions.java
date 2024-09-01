@@ -21,7 +21,7 @@ public class SQLFunctions {
     }
 
     public enum Punishments {
-        WARN, MUTE, BAN, KICK, ALL
+        WARN, MUTE, BAN, KICK, ALL, UNMUTE, UNBAN
     }
 
     static Connection conn = null;

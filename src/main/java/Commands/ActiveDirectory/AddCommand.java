@@ -34,7 +34,7 @@ public class AddCommand extends BaseCommand {
 
             if (roleId != null) {
 
-                String commandOrPunishmentValue = CommandHandler.getCommand(args[2]) != null ? CommandHandler.getCommand(args[2]).getName() : (PunishmentManagement.doesPunishmentExist(event.getGuild().getId(), args[2]) == 1 ? args[2] : "-1" ) ;
+                String commandOrPunishmentValue = CommandHandler.getCommand(args[2].toLowerCase()) != null ? CommandHandler.getCommand(args[2]).getName() : (PunishmentManagement.doesPunishmentExist(event.getGuild().getId(), args[2]) == 1 ? args[2] : "-1" ) ;
 
                 if (!commandOrPunishmentValue.equals("-1")) {
 

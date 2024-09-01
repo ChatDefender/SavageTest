@@ -36,7 +36,7 @@ public class RemoveRole extends BaseCommand {
 
                 if (stat == 0) {
 
-                    event.getChannel().sendMessage("Successfully added role " + event.getGuild().getRoleById(roleId).getName() + " to the " + args[0] + " group.").queue();
+                    event.getChannel().sendMessage("Successfully removed role " + event.getGuild().getRoleById(roleId).getName() + " to the " + args[0] + " group.").queue();
 
                 } else if (stat == 1) {
 
