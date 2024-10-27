@@ -32,25 +32,9 @@ public class RemoveRole extends BaseCommand {
 
             if (roleId != null) {
 
-                int stat = ActiveDirectoryManagement.removeRole(event.getGuild().getId(), args[0], roleId);
+                ActiveDirectoryManagement.removeRole(event.getGuild().getId(), args[0], roleId);
 
-                if (stat == 0) {
-
-                    event.getChannel().sendMessage("Successfully removed role " + event.getGuild().getRoleById(roleId).getName() + " to the " + args[0] + " group.").queue();
-
-                } else if (stat == 1) {
-
-                    event.getChannel().sendMessage("Role " + event.getGuild().getRoleById(roleId).getName() + " already exists in group " + args[0] + ".").queue();
-
-                } else if (stat == 2) {
-
-                    event.getChannel().sendMessage("Group  " + args[0] + " was not found.").queue();
-
-                } else if (stat == 3) {
-
-                    event.getChannel().sendMessage("There was an issue with that request.").queue();
-
-                }
+                event.getChannel().sendMessage("Successfully removed role.").queue();
 
             } else {
 

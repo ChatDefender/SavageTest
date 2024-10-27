@@ -10,13 +10,13 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static Main.functions.verifyRole;
 
-public class AddCommand extends BaseCommand {
+public class RemovePunishment extends BaseCommand {
 
-    public AddCommand() {
-        super("addcommand",
+    public RemovePunishment() {
+        super("removepunishment",
                 new String[] {  },
-                "addCommand [group_name] [@role | role_id] [command_name]",
-                "Adds command to a role for a specified group.",
+                "removepunishment [unit_name] [punishment_name]",
+                "Removes a punishment from a unit.",
                 "",
                 Permission.ADMINISTRATOR);
     }
@@ -30,15 +30,15 @@ public class AddCommand extends BaseCommand {
 
         } else {
 
-            if (CommandHandler.getCommand(args[1].toLowerCase()) != null) {
+            if (PunishmentManagement.checkPunishmentExistence(event.getGuild().getId(), args[1].toUpperCase()) > 0 ) {
 
-                ActiveDirectoryManagement.createCommand(event.getGuild().getId(), args[0], args[1].toLowerCase() );
+                ActiveDirectoryManagement.removePunishment(event.getGuild().getId(), args[0], args[1].toLowerCase() );
 
-                event.getChannel().sendMessage("Successfully added command.").queue();
+                event.getChannel().sendMessage("Successfully removed punishment.").queue();
 
             } else {
 
-                event.getChannel().sendMessage("Invalid command provided.").queue();
+                event.getChannel().sendMessage("That punishment does not exist.").queue();
 
             }
 

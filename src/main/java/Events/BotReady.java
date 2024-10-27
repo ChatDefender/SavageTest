@@ -21,9 +21,9 @@ public class BotReady extends ListenerAdapter {
 
             g.getRoles().forEach(r -> sb.append(r.getId()).append(":"));
 
-            ActiveDirectoryManagement.verifyRoles(sb.toString());
+            // ActiveDirectoryManagement.verifyRoles(sb.toString());
 
-            ConfigurationSettings.verifySettings(g.getId());
+            ConfigurationSettings.verifyGuildSetting(g.getId());
 
         });
 
@@ -40,7 +40,7 @@ public class BotReady extends ListenerAdapter {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                PunishmentLogManagement.filter(event);
+                PunishmentLogManagement.filterEndedPunishments(event);
             }
         };
 

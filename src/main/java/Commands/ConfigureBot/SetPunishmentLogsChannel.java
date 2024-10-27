@@ -27,9 +27,9 @@ public class SetPunishmentLogsChannel extends BaseCommand {
 
             if (channelId != null) {
 
-                ConfigurationSettings.setSetting(
+                ConfigurationSettings.updateSettings(
                         event.getGuild().getId(),
-                        SQLFunctions.Settings.PUNISHMENTLOGID,
+                        SQLFunctions.Settings.PUNISHMENT_LOG_ID,
                         channelId
                 );
 

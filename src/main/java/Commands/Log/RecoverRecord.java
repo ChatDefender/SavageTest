@@ -22,17 +22,23 @@ public class RecoverRecord extends BaseCommand {
         } else {
 
             // check if the log exists
-            if (PunishmentLogManagement.doesLogExists(Integer.parseInt(args[0]))) {
+            if (PunishmentLogManagement.doesPunishmentLogExist(event.getGuild().getId(), Integer.parseInt(args[0]))) {
 
-                // if it does exist, we can archive it
-                PunishmentLogManagement.unarchive(args[0]);
-                event.getChannel().sendMessage("Recovered record #" + Integer.parseInt(args[0])).queue();
+                if (event.getAuthor().getId().equals(PunishmentLogManagement.getStaffIdFromLog(args[0])) || event.getAuthor().getId().equals(PunishmentLogManagement.getUserIdFromLog(args[0])) ) {
+
+                    event.getChannel().sendMessage("You cannot recover your own punishment entry!").queue();
+
+                } else {
+
+                    // if it does exist, we can archive it
+                    PunishmentLogManagement.unarchivePunishmentLog(args[0]);
+                    event.getChannel().sendMessage("Recovered record #" + Integer.parseInt(args[0])).queue();
+                }
 
             } else {
 
                 // if the log does not exist
                 event.getChannel().sendMessage("Could not find the record with id number: " + args[0]).queue();
-
 
             }
 

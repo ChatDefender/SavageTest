@@ -23,7 +23,7 @@ public class SetPrefix extends BaseCommand {
 
         } else {
 
-            ConfigurationSettings.setSetting(
+            ConfigurationSettings.updateSettings(
                     event.getGuild().getId(),
                     SQLFunctions.Settings.PREFIX,
                     args[0]

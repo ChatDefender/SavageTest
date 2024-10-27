@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RemoveGroup extends BaseCommand {
 
     public RemoveGroup() {
-        super("removegroup",
+        super("removeunit",
                 new String[] {  },
-                "removegroup [group_name]",
-                "Removes a group.",
+                "removeunit [group_name]",
+                "Removes a unit.",
                 "",
                 Permission.ADMINISTRATOR);
     }
@@ -26,17 +26,10 @@ public class RemoveGroup extends BaseCommand {
 
         } else {
 
-            boolean isDeleted = ActiveDirectoryManagement.removeGroup(event.getGuild().getId(), args[0]);
+            ActiveDirectoryManagement.removeUnit(event.getGuild().getId(), args[0]);
 
-            if (isDeleted) {
+            event.getChannel().sendMessage("Successfully removed group " + args[0] + ".").queue();
 
-                event.getChannel().sendMessage("Successfully removed group " + args[0] + ".").queue();
-
-            } else {
-
-                event.getChannel().sendMessage("Group " + args[0] + " does not exist and therefore cannot be deleted.").queue();
-
-            }
 
         }
 

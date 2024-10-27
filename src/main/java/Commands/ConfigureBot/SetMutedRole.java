@@ -13,7 +13,7 @@ public class SetMutedRole extends BaseCommand {
 
 
     public SetMutedRole() {
-        super("setmutedrole", new String[] {} , "setmutedrole [@role | role_id]", "Sets the mute role.", "", Permission.ADMINISTRATOR);
+        super("setmuterole", new String[] {} , "setmuterole [@role | role_id]", "Sets the mute role.", "", Permission.ADMINISTRATOR);
     }
 
     @Override
@@ -29,9 +29,9 @@ public class SetMutedRole extends BaseCommand {
 
             if (roleId != null) {
 
-                ConfigurationSettings.setSetting(
+                ConfigurationSettings.updateSettings(
                         event.getGuild().getId(),
-                        SQLFunctions.Settings.MUTEDROLEID,
+                        SQLFunctions.Settings.MUTE_ROLE_ID,
                         roleId
                 );
 

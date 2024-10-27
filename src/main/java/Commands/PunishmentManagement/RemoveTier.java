@@ -18,13 +18,13 @@ public class RemoveTier extends BaseCommand {
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
         } else {
             String guildId = event.getGuild().getId();
-            String result = PunishmentManagement.removeTier(
+            PunishmentManagement.removePunishmentTier(
                     guildId,         // guildId
                     args[0],         // punishmentName
                     Integer.parseInt(args[1])  // punishmentTier
             );
 
-            event.getChannel().sendMessage("Remove Tier Result: " + result).queue();
+            event.getChannel().sendMessage("Successfully removed punishment tier.").queue();
         }
     }
 }

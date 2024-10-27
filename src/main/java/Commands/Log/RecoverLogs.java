@@ -44,7 +44,7 @@ public class RecoverLogs extends BaseCommand {
 
                     }
 
-                    PunishmentLogManagement.bulkUnarchive(event.getGuild().getId(), isStaff, u.getId());
+                    PunishmentLogManagement.bulkUnarchivePunishments(event.getGuild().getId(), isStaff, u.getId());
 
                     event.getChannel().sendMessage("Successfully recovered logs for " + name + "`[" + u.getId() + "]`").queue();
 

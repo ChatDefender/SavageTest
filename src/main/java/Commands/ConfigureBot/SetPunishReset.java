@@ -25,6 +25,8 @@ public class SetPunishReset extends BaseCommand {
 
             long duration = functions.timeToMilliseconds(args[0]);
 
+            System.out.println(duration);
+
             if (duration == -1) {
 
                 event.getChannel().sendMessage("You provided an invalid time. Available times are as follows:\n" +
@@ -37,9 +39,9 @@ public class SetPunishReset extends BaseCommand {
 
             } else {
 
-                ConfigurationSettings.setSetting(
+                ConfigurationSettings.updateSettings(
                         event.getGuild().getId(),
-                        SQLFunctions.Settings.PUNISH_RESET,
+                        SQLFunctions.Settings.PUNISHMENT_RESET,
                         ""+duration
                 );
 

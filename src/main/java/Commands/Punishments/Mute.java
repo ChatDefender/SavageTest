@@ -22,23 +22,23 @@ public class Mute extends BaseCommand {
 
 
         // Verify text is provided in the arguments
-        if (args.length <= 3) {
+        if (args.length <= 2) {
 
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
 
         } else {
 
+            String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTE_ROLE_ID);
 
+            System.out.println(muteRoleId);
 
-            String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
+            if ( muteRoleId == null ) {
 
-            if (muteRoleId.isEmpty()) {
-
-                event.getChannel().sendMessage("The mute role needs to be configured. Run `"+ ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PREFIX)+"config muteroleid [@mutedRole | mute role id]`").queue();
+                event.getChannel().sendMessage("The mute role needs to be configured. Run `"+ ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PREFIX)+"setmuterole [@mutedRole | mute role id]`").queue();
 
             } else if (event.getGuild().getRoleById(muteRoleId) == null) {
 
-                event.getChannel().sendMessage("I could not find the mute role. Please reset it using the setmutedrole command").queue();
+                event.getChannel().sendMessage("I could not find the mute role. Please reset it using the setmuterole command").queue();
 
             } else {
 

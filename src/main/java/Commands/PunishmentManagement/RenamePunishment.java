@@ -18,13 +18,13 @@ public class RenamePunishment extends BaseCommand {
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
         } else {
             String guildId = event.getGuild().getId();
-            String result = PunishmentManagement.renamePunishment(
+            PunishmentManagement.renamePunishment(
                     guildId,         // guildId
                     args[0],         // oldName
                     args[1]          // newName
             );
 
-            event.getChannel().sendMessage("Rename Punishment Result: " + result).queue();
+            event.getChannel().sendMessage("Successfully renamed punishment.").queue();
         }
     }
 }

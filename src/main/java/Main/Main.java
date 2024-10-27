@@ -59,7 +59,7 @@ public class Main {
         CommandHandler.registerCommand(new Unmute());
         CommandHandler.registerCommand(new Warn());
         CommandHandler.registerCommand(new Help());
-        CommandHandler.registerCommand(new AddGroup());
+        CommandHandler.registerCommand(new AddUnit());
         CommandHandler.registerCommand(new AddRole());
         CommandHandler.registerCommand(new AddCommand());
         CommandHandler.registerCommand(new RemoveGroup());
@@ -72,12 +72,14 @@ public class Main {
         CommandHandler.registerCommand(new RecoverLogs());
         CommandHandler.registerCommand(new CreatePunishment());
         CommandHandler.registerCommand(new DeletePunishment());
-        CommandHandler.registerCommand(new CreateTier());
+        CommandHandler.registerCommand(new AddTier());
         CommandHandler.registerCommand(new RemoveTier());
         CommandHandler.registerCommand(new EditTier());
         CommandHandler.registerCommand(new RenamePunishment());
         CommandHandler.registerCommand(new Punish());
         CommandHandler.registerCommand(new SetPunishReset());
+        CommandHandler.registerCommand(new AddPunishment());
+        CommandHandler.registerCommand(new RemovePunishment());
 
     }
 

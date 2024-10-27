@@ -8,47 +8,45 @@ import static Handlers.SQLHandlers.SQLFunctions.conn;
 
 public class CommandManagement {
 
-    public static int logCommand(String GuildId, String ChannelID, String UserID, String command, int user_has_permission) {
+    public static int insertCommandLog(String guildId, String channelId, String userId, String command, int userHasPermission) {
 
-        int rtnval = 0;
+        int rtnVal = 0;
 
         try {
 
             SQLFunctions.verifyConnection();
 
-            try (CallableStatement cstmt = conn.prepareCall("{ ? = call COMMAND_MANAGEMENT.INSERT_CMD_LOG(?, ?, ?, ?, ?) }")) {
+            try (CallableStatement cstmt = conn.prepareCall("{ ? = call COMMAND_MANAGEMENT.insert_cmd_log(?, ?, ?, ?, ?) }")) {
 
                 cstmt.registerOutParameter(1, Types.NUMERIC);
 
-                cstmt.setString(2, GuildId);
-                cstmt.setString(3, ChannelID);
-                cstmt.setString(4, UserID);
-                cstmt.setString(5, command);
-                cstmt.setInt(6, user_has_permission);
+                cstmt.setString(2, guildId);
+                cstmt.setString(3, channelId);
+                cstmt.setString(4, userId);
+                cstmt.setString(5, command.toUpperCase());
+                cstmt.setInt(6, userHasPermission);
 
                 cstmt.execute();
 
-                rtnval = cstmt.getInt(1);
+                rtnVal = cstmt.getInt(1);
 
             }
 
         } catch (SQLException e) {
-
             e.printStackTrace();
-
         }
 
-        return rtnval;
+        return rtnVal;
 
     }
 
-    public static void logCmdError(int cmdLogId, String commandFileName, String message) {
+    public static void logCommandError(int cmdLogId, String commandFileName, String message) {
 
         try {
 
             SQLFunctions.verifyConnection();
 
-            try (CallableStatement cstmt = conn.prepareCall("{ call COMMAND_MANAGEMENT.CMD_LOG_ERR(?, ?, ?) }")) {
+            try (CallableStatement cstmt = conn.prepareCall("{ call COMMAND_MANAGEMENT.cmd_log_err(?, ?, ?) }")) {
 
                 cstmt.setInt(1, cmdLogId);
                 cstmt.setString(2, commandFileName);
@@ -59,9 +57,7 @@ public class CommandManagement {
             }
 
         } catch (SQLException e) {
-
             e.printStackTrace();
-
         }
 
     }

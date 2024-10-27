@@ -23,13 +23,13 @@ public class CreatePunishment extends BaseCommand {
 
             String guildId = event.getGuild().getId();
             String createUserId = event.getAuthor().getId();
-            String result = PunishmentManagement.createPunishment(
+            PunishmentManagement.createPunishment(
                     guildId,       // guildId
                     args[0],       // punishmentName
                     createUserId   // createUserId
             );
 
-            event.getChannel().sendMessage("Create Punishment Result: " + result).queue();
+            event.getChannel().sendMessage("Successfully created punishment.").queue();
 
         }
 

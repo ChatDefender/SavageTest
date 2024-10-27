@@ -9,7 +9,7 @@ public class GuildJoin extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
 
-        ConfigurationSettings.verifySettings(event.getGuild().getId());
+        ConfigurationSettings.verifyGuildSetting(event.getGuild().getId());
 
     }
 

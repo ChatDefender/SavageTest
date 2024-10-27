@@ -2,6 +2,7 @@ package Commands.Punishments;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 
-import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishment;
+import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishmentLog;
 import static Handlers.SQLHandlers.PunishmentLogManagement.markPunishmentAsServed;
 
 public class Unban extends BaseCommand {
@@ -60,9 +61,9 @@ public class Unban extends BaseCommand {
 
                                 success -> {
                                     event.getChannel().sendMessage("Successfully unbanned " + user.getName()).queue();
-                                    insertPunishment(event.getGuild().getId(), user.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNBAN, "0", "Manual unban performed by staff.");
-                                    markPunishmentAsServed(user.getId(), SQLFunctions.Punishments.BAN);
-
+                                    insertPunishmentLog(event.getGuild().getId(), user.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNBAN, "0", "Manual unban performed by staff.");
+                                    int pun_log_id = PunishmentLogManagement.getPunishmentLogId(event.getGuild().getId(), user.getId(), SQLFunctions.Punishments.UNBAN);
+                                    markPunishmentAsServed(event.getGuild().getId(), pun_log_id+"");
                                 },
                                 error -> event.getChannel().sendMessage("Failed to unban user: " + error.getMessage()).queue()
 
@@ -70,7 +71,7 @@ public class Unban extends BaseCommand {
 
 
 
-                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
+                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENT_LOG_ID);
 
                         if (punishmentLogChannelId != null) {
 

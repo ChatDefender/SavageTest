@@ -13,11 +13,10 @@ public class Birthday extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
-        if (args.length == 1) {
+        String user = args.length == 0 ? "" : " " + args[0];
 
-            event.getChannel().sendMessage("Happy birthday " + args[0] + "! \nhttps://www.twitch.tv/lolipopgi/clip/CuteEasyMacaroniTBTacoRight-GEyluBFXObw-02qG").queue();
+        event.getChannel().sendMessage("Happy birthday" + user + "! \nhttps://www.twitch.tv/lolipopgi/clip/CuteEasyMacaroniTBTacoRight-GEyluBFXObw-02qG").queue();
 
-        }
 
     }
 

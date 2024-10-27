@@ -22,15 +22,15 @@ public class DeleteRecord extends BaseCommand {
         } else {
 
             // check if the log exists
-            if (PunishmentLogManagement.doesLogExists(Integer.parseInt(args[0]))) {
+            if (PunishmentLogManagement.doesPunishmentLogExist(event.getGuild().getId(), Integer.parseInt(args[0]))) {
 
-                if (event.getAuthor().getId().equals(PunishmentLogManagement.getRecordUserId(args[0]))) {
+                if (event.getAuthor().getId().equals(PunishmentLogManagement.getStaffIdFromLog(args[0])) || event.getAuthor().getId().equals(PunishmentLogManagement.getUserIdFromLog(args[0])) ) {
 
                     event.getChannel().sendMessage("You cannot delete your own punishment entry!").queue();
 
                 } else {
 
-                    PunishmentLogManagement.archiveLog(args[0]);
+                    PunishmentLogManagement.archivePunishmentLog(args[0]);
                     event.getChannel().sendMessage("Deleted record #" + args[0]).queue();
 
                 }

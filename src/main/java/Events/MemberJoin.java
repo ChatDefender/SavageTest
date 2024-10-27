@@ -13,9 +13,9 @@ public class MemberJoin extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
-        if(PunishmentLogManagement.isCurrentlyMuted(event.getGuild().getId(), event.getMember().getId())) {
+        if(PunishmentLogManagement.isUserCurrentlyMuted(event.getGuild().getId(), event.getMember().getId())) {
 
-            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID)))).complete();
+            event.getGuild().addRoleToMember(event.getMember(), Objects.requireNonNull(event.getGuild().getRoleById(ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTE_ROLE_ID)))).complete();
 
         }
 

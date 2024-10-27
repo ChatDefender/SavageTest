@@ -2,6 +2,7 @@ package Commands.Punishments;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;
+import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishment;
+import static Handlers.SQLHandlers.PunishmentLogManagement.insertPunishmentLog;
 import static Handlers.SQLHandlers.PunishmentLogManagement.markPunishmentAsServed;
 
 public class Unmute extends BaseCommand {
@@ -31,7 +32,7 @@ public class Unmute extends BaseCommand {
 
         } else {
 
-            String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTEDROLEID);
+            String muteRoleId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.MUTE_ROLE_ID);
 
             if (muteRoleId.isEmpty()) {
 
@@ -62,10 +63,11 @@ public class Unmute extends BaseCommand {
 
                         event.getChannel().sendMessage("Successfully unmuted " + member.getEffectiveName()).queue();
 
-                        insertPunishment(event.getGuild().getId(), member.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNMUTE, "0", "Manual unmute performed by staff.");
-                        markPunishmentAsServed(member.getId(), SQLFunctions.Punishments.UNMUTE);
+                        insertPunishmentLog(event.getGuild().getId(), member.getId(), event.getAuthor().getId(), SQLFunctions.Punishments.UNMUTE, "0", "Manual unmute performed by staff.");
+                        int pun_log_id = PunishmentLogManagement.getPunishmentLogId(event.getGuild().getId(), member.getId(), SQLFunctions.Punishments.UNMUTE);
+                        markPunishmentAsServed(event.getGuild().getId(), pun_log_id+"");
 
-                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENTLOGID);
+                        String punishmentLogChannelId = ConfigurationSettings.getSetting(event.getGuild().getId(), SQLFunctions.Settings.PUNISHMENT_LOG_ID);
 
                         if (punishmentLogChannelId != null) {
 

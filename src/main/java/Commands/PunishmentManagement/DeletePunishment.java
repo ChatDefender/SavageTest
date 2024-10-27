@@ -18,12 +18,12 @@ public class DeletePunishment extends BaseCommand {
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
         } else {
             String guildId = event.getGuild().getId();
-            String result = PunishmentManagement.deletePunishment(
+            PunishmentManagement.deletePunishment(
                     guildId,       // guildId
                     args[0]        // punishmentName
             );
 
-            event.getChannel().sendMessage("Delete Punishment Result: " + result).queue();
+            event.getChannel().sendMessage("Successfully deleted punishment.").queue();
 
         }
 

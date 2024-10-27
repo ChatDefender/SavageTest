@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class MessageEvent extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -50,38 +53,60 @@ public class MessageEvent extends ListenerAdapter {
 
                         if (CommandHandler.doesCommandExist(command)) {
 
-                            boolean hasPerms = functions.hasPermissions(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getGuild().getId(), command);
+                            boolean hasPerms = functions.hasCmdPerms(event.getGuild().retrieveMemberById(event.getAuthor().getId()).complete(), event.getGuild().getId(), command);
 
                             if (hasPerms) {
 
-                                int cmdLogId = CommandManagement.logCommand(event.getGuild().getId(),
+                                int cmdLogId = CommandManagement.insertCommandLog(
+                                        event.getGuild().getId(),
                                         event.getChannel().getId(),
                                         event.getAuthor().getId(),
                                         CommandHandler.getCommand(command).getName(),
-                                        1);
+                                        1
+                                );
 
                                 try {
 
+                                    // Attempt to execute the command
                                     CommandHandler.executeCommand(command.toLowerCase(), event, args);
 
-                                } catch (Exception e ) {
+                                } catch (Exception e) {
 
-                                    CommandManagement.logCmdError(cmdLogId, command + ".java", e.getMessage());
+                                    // Log the error to the database
+                                    CommandManagement.logCommandError(cmdLogId, command + ".java", e.getMessage());
 
                                     e.printStackTrace();
 
+                                    // Capture the stack trace as a string
+                                    StringWriter sw = new StringWriter();
+                                    e.printStackTrace(new PrintWriter(sw));
+                                    String stackTrace = sw.toString();
+
+                                    // Send stack trace to the specified guild and channel
+                                    event.getJDA().getGuildById("1132678375660585061")
+                                            .getTextChannelById("1299744552092962816")
+                                            .sendMessage("```" + stackTrace + "```")
+                                            .queue();
+
+                                    // Respond in chat with a high-level error message
+                                    event.getChannel().sendMessage("An unexpected error occurred while executing the command. Please try again later.").queue();
                                 }
 
                             } else {
 
-                                int cmdlogid = CommandManagement.logCommand(event.getGuild().getId(),
+                                int cmdLogId = CommandManagement.insertCommandLog(
+                                        event.getGuild().getId(),
                                         event.getChannel().getId(),
                                         event.getAuthor().getId(),
                                         CommandHandler.getCommand(command).getName(),
-                                        0);
+                                        0
+                                );
 
-                                CommandManagement.logCmdError(cmdlogid, "MessageEvent.java", "User " + event.getAuthor().getId() + " did not have permissions to run this command.");
+                                // Log that the user did not have permissions to run this command
+                                CommandManagement.logCommandError(cmdLogId, "MessageEvent.java", "User " + event.getAuthor().getId() + " did not have permissions to run this command.");
 
+                                // Notify the user about the lack of permissions
+                                event.getChannel().sendMessage("You do not have the necessary permissions to run this command.").queue();
                             }
 
                         }

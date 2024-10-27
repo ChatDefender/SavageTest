@@ -8,13 +8,13 @@ import static Handlers.SQLHandlers.SQLFunctions.conn;
 
 public class ConfigurationSettings {
 
-    public static void setSetting(String guildId, SQLFunctions.Settings setting, String newValue) {
+    public static void updateSettings(String guildId, SQLFunctions.Settings setting, String newValue) {
 
         try {
 
             SQLFunctions.verifyConnection();
 
-            String procCall = "{ call configuration_management.update_settings(?, ?, ?) }";
+            String procCall = "{ call CONFIGURATION_MANAGEMENT.update_settings(?, ?, ?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -26,9 +26,7 @@ public class ConfigurationSettings {
             }
 
         } catch (SQLException se) {
-
             se.printStackTrace();
-
         }
 
     }
@@ -41,12 +39,11 @@ public class ConfigurationSettings {
 
             SQLFunctions.verifyConnection();
 
-            String functionCall = "{ ? = call configuration_management.get_setting(?, ?)}";
+            String functionCall = "{ ? = call CONFIGURATION_MANAGEMENT.get_setting(?, ?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(functionCall)) {
 
                 cstmt.registerOutParameter(1, Types.VARCHAR);
-
                 cstmt.setString(2, guildId);
                 cstmt.setString(3, setting.toString());
 
@@ -57,20 +54,18 @@ public class ConfigurationSettings {
             }
 
         } catch (SQLException se) {
-
             se.printStackTrace();
-
         }
 
         return rtnVal;
     }
 
-    public static void verifySettings(String guildId) {
+    public static void verifyGuildSetting(String guildId) {
 
         try {
 
             SQLFunctions.verifyConnection();
-            String procCall = "{ call configuration_management.verify_settings(?) }";
+            String procCall = "{ call CONFIGURATION_MANAGEMENT.verify_guild_setting(?) }";
 
             try (CallableStatement cstmt = conn.prepareCall(procCall)) {
 
@@ -81,31 +76,27 @@ public class ConfigurationSettings {
             }
 
         } catch (SQLException se) {
-
             se.printStackTrace();
-
         }
 
     }
 
-    public static void removeMutedRole(String GuildId, String RoleId) {
+    public static void removeMutedRole(String guildId, String roleId) {
 
         try {
 
             SQLFunctions.verifyConnection();
 
-            try (CallableStatement cstmt = conn.prepareCall("{ call configuration_management.remove_muted_role(?, ?) }")) {
+            try (CallableStatement cstmt = conn.prepareCall("{ call CONFIGURATION_MANAGEMENT.remove_muted_role(?, ?) }")) {
 
-                cstmt.setString(1, GuildId);
-                cstmt.setString(2, RoleId);
+                cstmt.setString(1, guildId);
+                cstmt.setString(2, roleId);
                 cstmt.execute();
 
             }
 
         } catch (SQLException e) {
-
             e.printStackTrace();
-
         }
 
     }

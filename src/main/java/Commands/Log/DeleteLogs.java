@@ -44,7 +44,7 @@ public class DeleteLogs extends BaseCommand {
 
                     }
 
-                    PunishmentLogManagement.bulkArchive(event.getGuild().getId(), isStaff, u.getId());
+                    PunishmentLogManagement.bulkArchivePunishments(event.getGuild().getId(), isStaff, u.getId());
 
                     event.getChannel().sendMessage("Successfully cleared logs for " + name + "`[" + u.getId() + "]`").queue();
 

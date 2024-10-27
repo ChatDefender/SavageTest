@@ -17,7 +17,7 @@ public class Ban extends BaseCommand {
     @Override
     public void run(MessageReceivedEvent event, String[] args) {
 
-        if (args.length < 3) {
+        if (args.length <= 2) {
 
             event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
 
