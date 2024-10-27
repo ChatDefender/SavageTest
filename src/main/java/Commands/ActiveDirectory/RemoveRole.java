@@ -11,7 +11,8 @@ import static Main.functions.verifyRole;
 public class RemoveRole extends BaseCommand {
 
     public RemoveRole() {
-        super("removerole",
+        super("ActiveDirectory",
+                "removerole",
                 new String[] { },
                 "removerole [group_name] [@role | role_id]",
                 "Removes a group.",

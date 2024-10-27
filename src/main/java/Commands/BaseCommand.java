@@ -11,9 +11,11 @@ public class BaseCommand {
     String smallDescription;
     String longDescription;
     Permission permissionlevel;
+    String category;
 
-    public BaseCommand(String n, String[] a, String u, String sd, String ld, Permission permissionlevel) {
+    public BaseCommand(String c, String n, String[] a, String u, String sd, String ld, Permission permissionlevel) {
 
+        this.category = c;
         this.name = n;
         this.alias = a;
         this.usage = u;
@@ -62,6 +64,12 @@ public class BaseCommand {
     public String getLongDescription() {
 
         return this.longDescription;
+
+    }
+
+    public String getCategory() {
+
+        return this.category;
 
     }
 }

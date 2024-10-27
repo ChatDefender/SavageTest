@@ -7,7 +7,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class Birthday extends BaseCommand {
 
     public Birthday() {
-        super("birthday", new String[] {"bday"}, "birthday [@user]", "Provides information on commands", "", Permission.MESSAGE_SEND);
+        super("User",
+                "birthday", new String[] {"bday"}, "birthday [@user]", "Provides information on commands", "", Permission.MESSAGE_SEND);
     }
 
     @Override

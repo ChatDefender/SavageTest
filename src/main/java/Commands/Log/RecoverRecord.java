@@ -10,7 +10,8 @@ public class RecoverRecord extends BaseCommand {
 
 
     public RecoverRecord() {
-        super("recoverrecord", new String[] {"recrec"}, "recrec {#PunishmentLogId}", "Recovers a deleted record from the punishment log database", "", Permission.ADMINISTRATOR);
+        super("PunishmentLogs",
+                "recoverrecord", new String[] {"recrec"}, "recrec {#PunishmentLogId}", "Recovers a deleted record from the punishment log database", "", Permission.ADMINISTRATOR);
     }
     @Override
     public void run(MessageReceivedEvent event, String[] args) {

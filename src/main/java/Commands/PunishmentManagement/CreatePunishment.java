@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class CreatePunishment extends BaseCommand {
 
     public CreatePunishment() {
-        super("createpunishment", new String[] {"addpunishment"}, "createpunishment [punishmentName]", "Creates a new punishment.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "createpunishment", new String[] {"addpunishment"}, "createpunishment [punishmentName]", "Creates a new punishment.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

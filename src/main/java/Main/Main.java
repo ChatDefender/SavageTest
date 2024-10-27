@@ -1,14 +1,17 @@
 package Main;
 
 import Commands.ActiveDirectory.*;
-import Commands.ConfigureBot.*;
+import Commands.ConfigureBot.SetMutedRole;
+import Commands.ConfigureBot.SetPrefix;
+import Commands.ConfigureBot.SetPunishReset;
+import Commands.ConfigureBot.SetPunishmentLogsChannel;
 import Commands.Log.*;
 import Commands.PunishmentManagement.*;
 import Commands.Punishments.*;
-import Commands.User.*;
+import Commands.User.Birthday;
+import Commands.User.Help;
 import Events.*;
 import Handlers.CommandHandler;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;

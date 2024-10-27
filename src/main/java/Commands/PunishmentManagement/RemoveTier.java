@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RemoveTier extends BaseCommand {
 
     public RemoveTier() {
-        super("removetier", new String[] {}, "removetier [punishmentName] [punishmentTier]", "Removes a punishment tier.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "removetier", new String[] {}, "removetier [punishmentName] [punishmentTier]", "Removes a punishment tier.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

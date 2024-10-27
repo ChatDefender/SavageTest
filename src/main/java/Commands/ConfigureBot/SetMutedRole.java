@@ -13,7 +13,8 @@ public class SetMutedRole extends BaseCommand {
 
 
     public SetMutedRole() {
-        super("setmuterole", new String[] {} , "setmuterole [@role | role_id]", "Sets the mute role.", "", Permission.ADMINISTRATOR);
+        super("Configuration",
+                "setmuterole", new String[] {} , "setmuterole [@role | role_id]", "Sets the mute role.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -1,19 +1,17 @@
 package Commands.ActiveDirectory;
 
 import Commands.BaseCommand;
-import Handlers.CommandHandler;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.PunishmentManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import static Main.functions.verifyRole;
-
 public class AddPunishment extends BaseCommand {
 
     public AddPunishment() {
-        super("addpunishment",
+        super("ActiveDirectory",
+                "addpunishment",
                 new String[] {  },
                 "addpunishment [unit_name] [punishment_name]",
                 "Adds punishment to a unit.",

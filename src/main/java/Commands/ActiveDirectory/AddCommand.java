@@ -3,17 +3,16 @@ package Commands.ActiveDirectory;
 import Commands.BaseCommand;
 import Handlers.CommandHandler;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
-import Handlers.SQLHandlers.PunishmentManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import static Main.functions.verifyRole;
-
 public class AddCommand extends BaseCommand {
 
     public AddCommand() {
-        super("addcommand",
+        super(
+                "ActiveDirectory",
+                "addcommand",
                 new String[] {  },
                 "addCommand [group_name] [@role | role_id] [command_name]",
                 "Adds command to a role for a specified group.",

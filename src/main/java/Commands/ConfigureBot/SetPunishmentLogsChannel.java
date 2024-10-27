@@ -11,7 +11,8 @@ import static Main.functions.verifyChannel;
 
 public class SetPunishmentLogsChannel extends BaseCommand {
     public SetPunishmentLogsChannel() {
-        super("setpunishmentlogchannel", new String[] {"setpunlogchannel"} , "setpunishmentlogchannel [#channel | channel_id]", "Sets the puinishment log channel id.", "", Permission.ADMINISTRATOR);
+        super("Configuration",
+                "setpunishmentlogchannel", new String[] {"setpunlogchannel"} , "setpunishmentlogchannel [#channel | channel_id]", "Sets the puinishment log channel id.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

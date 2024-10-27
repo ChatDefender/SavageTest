@@ -2,7 +2,9 @@ package Handlers.SQLHandlers;
 
 import Main.functions;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class SQLFunctions {
 

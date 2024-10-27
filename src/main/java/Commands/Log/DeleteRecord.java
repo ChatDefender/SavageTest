@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class DeleteRecord extends BaseCommand {
 
     public DeleteRecord() {
-        super("deleterecord", new String[]{"delrec"}, "delrec {#PunishmentLogId}", "Deletes a record from the punishment logs database", "", Permission.ADMINISTRATOR);
+        super("PunishmentLogs",
+                "deleterecord", new String[]{"delrec"}, "delrec {#PunishmentLogId}", "Deletes a record from the punishment logs database", "", Permission.ADMINISTRATOR);
     }
 
     @Override

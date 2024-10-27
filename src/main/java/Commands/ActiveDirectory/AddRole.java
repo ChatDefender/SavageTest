@@ -11,7 +11,8 @@ import static Main.functions.verifyRole;
 public class AddRole extends BaseCommand {
 
     public AddRole() {
-        super("addrole",
+        super("ActiveDirectory",
+                "addrole",
                 new String[] {  },
                 "addrole [group_name] [@role | role_id]",
                 "Adds a role to an already existing group.",

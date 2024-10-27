@@ -1,12 +1,12 @@
 package Events;
 
-import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.ConfigurationSettings;
 import Handlers.SQLHandlers.PunishmentLogManagement;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BotReady extends ListenerAdapter {
 

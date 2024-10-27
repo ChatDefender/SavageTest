@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class DeletePunishment extends BaseCommand {
 
     public DeletePunishment() {
-        super("deletepunishment", new String[] {}, "deletepunishment [punishmentName]", "Deletes an existing punishment.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "deletepunishment", new String[] {}, "deletepunishment [punishmentName]", "Deletes an existing punishment.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

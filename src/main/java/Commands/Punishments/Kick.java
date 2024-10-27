@@ -1,21 +1,17 @@
 package Commands.Punishments;
 
 import Commands.BaseCommand;
-import Handlers.SQLHandlers.ConfigurationSettings;
-import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static Main.functions.executePunishment;
 
 public class Kick extends BaseCommand {
     public Kick() {
-        super("kick", new String[] {"remove", "buhbye"}, "kick {@user | userId} {reason}", "Removes a member from the server.", "", Permission.KICK_MEMBERS);
+        super("Punishment",
+                "kick", new String[] {"remove", "buhbye"}, "kick {@user | userId} {reason}", "Removes a member from the server.", "", Permission.KICK_MEMBERS);
     }
 
     @Override

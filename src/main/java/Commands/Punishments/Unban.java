@@ -18,7 +18,8 @@ import static Handlers.SQLHandlers.PunishmentLogManagement.markPunishmentAsServe
 public class Unban extends BaseCommand {
 
     public Unban() {
-        super("unban", new String[] {}, "unban {userId}", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons", Permission.BAN_MEMBERS);
+        super("Punishment",
+                "unban", new String[] {}, "unban {userId}", "Unbans a user from a server.", "Used when a user is wrongfully banned, started acting right, or other reasons", Permission.BAN_MEMBERS);
     }
 
     @Override

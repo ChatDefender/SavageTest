@@ -2,13 +2,9 @@ package Commands.Punishments;
 
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.ConfigurationSettings;
-import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import static Main.functions.executePunishment;
@@ -16,7 +12,8 @@ import static Main.functions.executePunishment;
 public class Mute extends BaseCommand {
 
     public Mute() {
-        super("mute", new String[] {"silence", "bequiet", "shush"}, "mute {@user | userId} {duration} {reason}", "Mutes a specified user for a specified duration", "\nAvailable times are in (m)inutes, (h)ours, (d)ays, (mon)ths, (y)ear, or 0 for indefinite.\nUsed when someone is being naughty in the chatty, or tickles rose on the wrong day", Permission.MANAGE_ROLES);    }
+        super("Punishment",
+                "mute", new String[] {"silence", "bequiet", "shush"}, "mute {@user | userId} {duration} {reason}", "Mutes a specified user for a specified duration", "\nAvailable times are in (m)inutes, (h)ours, (d)ays, (mon)ths, (y)ear, or 0 for indefinite.\nUsed when someone is being naughty in the chatty, or tickles rose on the wrong day", Permission.MANAGE_ROLES);    }
 
     public void run(MessageReceivedEvent event, String[] args) {
 

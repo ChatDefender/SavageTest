@@ -3,9 +3,9 @@ package Commands.Log;
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.SQLFunctions;
+import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import Main.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,7 +15,8 @@ public class ModLogs extends BaseCommand {
 
     public ModLogs() {
 
-        super("modlogs", new String[] {"modlog", "punlog"}, "modlog [@user | user id] (punishment type) (-s(taff)) (-a(rchived))", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-s is the staff member responsible for the punishents\n-a will include archived entries", Permission.ADMINISTRATOR);
+        super("PunishmentLogs",
+                "modlogs", new String[] {"modlog", "punlog"}, "modlog [@user | user id] (punishment type) (-s(taff)) (-a(rchived))", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-s is the staff member responsible for the punishents\n-a will include archived entries", Permission.ADMINISTRATOR);
 
     }
 

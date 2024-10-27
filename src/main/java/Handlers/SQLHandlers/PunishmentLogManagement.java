@@ -1,5 +1,6 @@
 package Handlers.SQLHandlers;
 
+import Main.functions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -432,7 +433,7 @@ public class PunishmentLogManagement {
             StringBuilder table = new StringBuilder();
             table.append(String.format(formatString,
                     "Staff Name", "User Name", "Punishment Type", "Duration(in ms)", "Reason", "Punished On", "Is Served"));
-            table.append(repeat('-', maxStaffName + maxUserName + maxPunishmentType + maxDuration + maxReason + maxTimestamp + maxIsServed + 23) + "\n");
+            table.append(functions.repeat('-', maxStaffName + maxUserName + maxPunishmentType + maxDuration + maxReason + maxTimestamp + maxIsServed + 23) + "\n");
 
             // Step 4: Second pass through the result set to format each row
             resultSet.beforeFirst(); // Move back to the beginning of the ResultSet
@@ -457,16 +458,6 @@ public class PunishmentLogManagement {
 
         return "";
     }
-
-    // Helper method to repeat a character
-    public static String repeat(char c, int count) {
-        StringBuilder builder = new StringBuilder(count);
-        for (int i = 0; i < count; i++) {
-            builder.append(c);
-        }
-        return builder.toString();
-    }
-
 
 
 }

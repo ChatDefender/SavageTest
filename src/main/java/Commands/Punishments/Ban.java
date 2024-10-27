@@ -11,7 +11,8 @@ import static Main.functions.executePunishment;
 public class Ban extends BaseCommand {
 
     public Ban() {
-        super("ban", new String[]{"banish", "banana", "bananahammer"}, "ban {@user | userId} {duration} {reason}", "Bans a user from the discord server", "Available times are in (m)inutes, (h)ours, (d)ays, (mon)ths, (y)ear, or 0 for permanent.", Permission.BAN_MEMBERS);
+        super("Punishment",
+                "ban", new String[]{"banish", "banana", "bananahammer"}, "ban {@user | userId} {duration} {reason}", "Bans a user from the discord server", "Available times are in (m)inutes, (h)ours, (d)ays, (mon)ths, (y)ear, or 0 for permanent.", Permission.BAN_MEMBERS);
     }
 
     @Override

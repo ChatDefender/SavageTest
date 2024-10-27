@@ -1,4 +1,5 @@
 package Commands.PunishmentManagement;
+
 import Commands.BaseCommand;
 import Handlers.SQLHandlers.PunishmentLogManagement;
 import Handlers.SQLHandlers.PunishmentManagement;
@@ -7,12 +8,12 @@ import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.json.JSONObject;
 
 public class Punish extends BaseCommand {
 
     public Punish() {
-        super("punish", new String[] {"pu"}, "pu [@User | user id] [punishment_name | punishment_id]", "Punishes a user based on their current tier.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "punish", new String[] {"pu"}, "pu [@User | user id] [punishment_name | punishment_id]", "Punishes a user based on their current tier.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class AddTier extends BaseCommand {
 
     public AddTier() {
-        super("addtier", new String[] {}, "addtier [punishmentName] [punishmentType] [duration]", "Creates a new punishment tier.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "addtier", new String[] {}, "addtier [punishmentName] [punishmentType] [duration]", "Creates a new punishment tier.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

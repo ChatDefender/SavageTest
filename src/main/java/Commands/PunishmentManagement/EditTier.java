@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class EditTier extends BaseCommand {
 
     public EditTier() {
-        super("edittier", new String[] {}, "edittier [punishmentName] [punishmentTier] [columnName] [newValue]", "Edits a punishment tier.", "Valid column names are time and type.", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "edittier", new String[] {}, "edittier [punishmentName] [punishmentTier] [columnName] [newValue]", "Edits a punishment tier.", "Valid column names are time and type.", Permission.ADMINISTRATOR);
     }
 
     @Override

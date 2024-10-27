@@ -1,19 +1,17 @@
 package Commands.ActiveDirectory;
 
 import Commands.BaseCommand;
-import Handlers.CommandHandler;
 import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.PunishmentManagement;
 import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import static Main.functions.verifyRole;
-
 public class RemovePunishment extends BaseCommand {
 
     public RemovePunishment() {
-        super("removepunishment",
+        super("ActiveDirectory",
+                "removepunishment",
                 new String[] {  },
                 "removepunishment [unit_name] [punishment_name]",
                 "Removes a punishment from a unit.",

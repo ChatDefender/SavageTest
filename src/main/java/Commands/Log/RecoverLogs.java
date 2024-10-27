@@ -10,7 +10,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RecoverLogs extends BaseCommand {
 
     public RecoverLogs() {
-        super("recoverlogs", new String[] {"reclogs"}, "clearlogs {@user | user_id} {-staff}", "Archives logs from a specified users.", "Can only bulk delete records from users. Cannot bulk delete staff records.", Permission.ADMINISTRATOR);
+        super("PunishmentLogs",
+                "recoverlogs", new String[] {"reclogs"}, "clearlogs {@user | user_id} {-staff}", "Archives logs from a specified users.", "Can only bulk delete records from users. Cannot bulk delete staff records.", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class AddUnit extends BaseCommand {
 
     public AddUnit() {
-        super("addunit",
+        super("ActiveDirectory",
+                "addunit",
                 new String[] { "createunit" },
                 "addunit [unit_name]",
                 "Creates a unit for permission management",

@@ -11,7 +11,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class SetPrefix extends BaseCommand {
 
     public SetPrefix() {
-        super("setprefix", new String[] {} , "setprefix [new prefix]", "Sets the prefix.", "", Permission.ADMINISTRATOR);
+        super("Configuration",
+                "setprefix", new String[] {} , "setprefix [new prefix]", "Sets the prefix.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -7,12 +7,11 @@ import Main.functions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import static Main.functions.verifyRole;
-
 public class RemoveCommand extends BaseCommand {
 
     public RemoveCommand() {
-        super("removecommand",
+        super("ActiveDirectory",
+                "removecommand",
                 new String[] {  },
                 "removecommand [group_name] [@role | role_id] [command_name]",
                 "Removes a command from a role within a group.",

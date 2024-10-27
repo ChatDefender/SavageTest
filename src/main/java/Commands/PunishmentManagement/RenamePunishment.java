@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RenamePunishment extends BaseCommand {
 
     public RenamePunishment() {
-        super("renamepunishment", new String[] {"editpunishment"}, "renamepunishment [oldName] [newName]", "Renames a punishment.", "", Permission.ADMINISTRATOR);
+        super("PunishmentManagement",
+                "renamepunishment", new String[] {"editpunishment"}, "renamepunishment [oldName] [newName]", "Renames a punishment.", "", Permission.ADMINISTRATOR);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package Handlers.SQLHandlers;
 
-import org.json.JSONObject;
-
 import java.sql.*;
 
 import static Handlers.SQLHandlers.SQLFunctions.conn;

@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class RemoveGroup extends BaseCommand {
 
     public RemoveGroup() {
-        super("removeunit",
+        super("ActiveDirectory",
+                "removeunit",
                 new String[] {  },
                 "removeunit [group_name]",
                 "Removes a unit.",
