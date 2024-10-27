@@ -7,93 +7,104 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import Main.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class ModLogs extends BaseCommand {
 
     public ModLogs() {
 
-        super("modlogs", new String[] {"modlog", "punlog"}, "modlog [@user | user id] [-user | -staff] [punishment type] (-archived)", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-u is the user punished\n-s is the staff member responsible for the punishents\n-a will search only archived entries", Permission.ADMINISTRATOR);
+        super("modlogs", new String[] {"modlog", "punlog"}, "modlog [@user | user id] (punishment type) (-s(taff)) (-a(rchived))", "Retrieves records from the punishment log database.", "\nQueries the database for punishments\n-s is the staff member responsible for the punishents\n-a will include archived entries", Permission.ADMINISTRATOR);
 
     }
-//
-//    @Override
-//    public void run(MessageReceivedEvent event, String[] args) {
-//
-//        if (args.length < 3) {
-//
-//            event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
-//
-//        } else {
-//
-//            /// Get the user ID, if a user is mentioned, remove the <@ and > to get only the ID
-//            String userId = args[0];
-//            userId = userId.replace("<@", "").replace(">", "");
-//
-//            // Determine if it is staff or user
-//            boolean isUser = args[1].equalsIgnoreCase("-u") || args[1].equalsIgnoreCase("-user");
-//            boolean isStaff = args[1].equalsIgnoreCase("-s") || args[1].equalsIgnoreCase("-staff");
-//
-//            // Determine the punishment type
-//            SQLFunctions.Punishments punType;
-//
-//            String suppliedPunType = args[2].toLowerCase();
-//
-//            switch (suppliedPunType) {
-//                case "mute":
-//                    punType = SQLFunctions.Punishments.MUTE;
-//                    break;
-//                case "ban":
-//                    punType = SQLFunctions.Punishments.BAN;
-//                    break;
-//                case "warn":
-//                    punType = SQLFunctions.Punishments.WARN;
-//                    break;
-//                case "kick":
-//                    punType = SQLFunctions.Punishments.KICK;
-//                    break;
-//                case "unmute":
-//                    punType = SQLFunctions.Punishments.UNMUTE;
-//                    break;
-//                case "unban":
-//                    punType = SQLFunctions.Punishments.UNBAN;
-//                    break;
-//                default:
-//                    punType = SQLFunctions.Punishments.ALL;
-//                    break;
-//            }
-//
-//            // Determine whether to show all or archived logs
-//            boolean isArchived = false;
-//            if (args.length == 4) {
-//                isArchived = args[3].equalsIgnoreCase("-a") || args[3].equalsIgnoreCase("-archive");
-//            }
-//
-//            if (isUser || isStaff) {
-//                // Use the unified method to get punishment logs
-//                String result = PunishmentLogManagement.(
-//                        event.getGuild().getId(),
-//                        userId,
-//                        isStaff, // Use isStaff to determine if it's for a staff member
-//                        punType,
-//                        isArchived
-//                );
-//
-//                // Send the result as a message
-//                if (result.startsWith("PL_")) {
-//
-//
-//
-//                } else {
-//
-//                    event.getChannel().sendMessage(result).queue();
-//
-//                }
-//            } else {
-//                event.getChannel().sendMessage("Please specify whether to look up -user or -staff records!").queue();
-//            }
-//
-//
-//        }
-//
-//    }
+
+    @Override
+    public void run(MessageReceivedEvent event, String[] args) {
+
+        String guildId = event.getGuild().getId();
+        String userId = "";
+        boolean isStaff = false;
+        SQLFunctions.Punishments punType = SQLFunctions.Punishments.valueOf("ALL");
+        boolean includeArchived = false;
+
+        boolean isErr = false;
+
+        switch (args.length) {
+            case 0: // No arguments provided
+                event.getChannel().sendMessage(functions.buildHelpBlock(this.getName())).queue();
+                break;
+
+            case 1: // Only the user provided
+                userId = args[0].replaceAll("[^0-9]", ""); // Remove non-numeric characters
+                break;
+
+            case 2: // User and punishment type
+                userId = args[0].replaceAll("[^0-9]", "");
+                try {
+                    punType = SQLFunctions.Punishments.valueOf(args[1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    event.getChannel().sendMessage("Invalid punishment type: " + args[1]).queue();
+                    isErr = true;
+                    return;
+                }
+                break;
+
+            case 3: // User, punishment type, and staff flag
+                userId = args[0].replaceAll("[^0-9]", "");
+                try {
+                    punType = SQLFunctions.Punishments.valueOf(args[1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    event.getChannel().sendMessage("Invalid punishment type: " + args[1]).queue();
+                    isErr = true;
+                    return;
+                }
+                isStaff = args[2].equalsIgnoreCase("-s") || args[2].equalsIgnoreCase("-staff");
+                break;
+
+            case 4: // All arguments provided
+                userId = args[0].replaceAll("[^0-9]", "");
+                try {
+                    punType = SQLFunctions.Punishments.valueOf(args[1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    event.getChannel().sendMessage("Invalid punishment type: " + args[1]).queue();
+                    isErr = true;
+                    return;
+                }
+                isStaff = args[2].equalsIgnoreCase("-s") || args[2].equalsIgnoreCase("-staff");
+                includeArchived = args[3].equalsIgnoreCase("-a") || args[3].equalsIgnoreCase("-archived") || args[3].equalsIgnoreCase("-archive");
+                break;
+
+            default:
+                // Too many arguments
+                event.getChannel().sendMessage("Too many arguments provided. Please check the command syntax.").queue();
+                return;
+        }
+
+        // Log or further process the extracted variables: userId, punType, isStaff, includeArchived
+        if (!isErr) {
+
+            try {
+
+                File tempFile = File.createTempFile("modlogs_", ".txt");
+                try (FileWriter writer = new FileWriter(tempFile)) {
+                    writer.write(PunishmentLogManagement.getPunishmentLogs(event, guildId, userId, isStaff, punType.toString(), includeArchived).toString());
+                }
+
+                // Step 2: Send the file in the channel
+                event.getChannel().sendMessage("Please review the attached for punishment logs.").queue();
+                event.getChannel().sendFiles(net.dv8tion.jda.api.utils.FileUpload.fromData(tempFile, "modlogs.txt")).queue();
+
+                // Step 3: Clean up temporary file if necessary
+                tempFile.deleteOnExit();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                event.getChannel().sendMessage("An error occurred while generating the output file.").queue();
+            }
+
+        }
+
+    }
 
 }

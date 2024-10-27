@@ -3,6 +3,7 @@ package Handlers.SQLHandlers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 
 import java.sql.*;
@@ -365,4 +366,107 @@ public class PunishmentLogManagement {
 
         return rtnVal;
     }
+
+    public static String getPunishmentLogs(MessageReceivedEvent event, String guildId, String discordId, boolean isStaff,
+                                           String punishmentType, boolean includeArchived) {
+
+        try {
+            // Verify or establish connection to the database
+            SQLFunctions.verifyConnection();
+
+            // Base query with placeholders
+            String sql = "SELECT " +
+                    "staff_id, user_id, punishment_type, duration, reason, to_char(create_stamp, 'YYYY/MM/DD HH24:MI:SS') as create_stamp, is_served " +
+                    "FROM punishment_logs " +
+                    "WHERE guild_id = ? " +
+                    "AND ((? = 1 AND staff_id = ?) OR (? = 0 AND user_id = ?)) " +
+                    "AND (punishment_type = ? OR ? = 'ALL') " +
+                    "AND (is_archived = '0' OR ? = 1) " +
+                    "ORDER BY create_stamp DESC";
+
+            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stmt.setString(1, guildId);
+            stmt.setInt(2, isStaff ? 1 : 0);
+            stmt.setString(3, discordId);
+            stmt.setInt(4, isStaff ? 1 : 0);
+            stmt.setString(5, discordId);
+            stmt.setString(6, punishmentType);
+            stmt.setString(7, punishmentType);
+            stmt.setInt(8, includeArchived ? 1 : 0);
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Step 1: Calculate max width of each column
+            int maxStaffName = "Staff Name".length();
+            int maxUserName = "User Name".length();
+            int maxPunishmentType = "Punishment Type".length();
+            int maxDuration = "Duration(in ms)".length();
+            int maxReason = "Reason".length();
+            int maxTimestamp = "Punished On".length();
+            int maxIsServed = "Is Served".length();
+
+            // First pass through the result set to find the longest values
+            while (resultSet.next()) {
+                String staffName = event.getJDA().retrieveUserById(resultSet.getString("staff_id")).complete().getName();
+                String userName = event.getJDA().retrieveUserById(resultSet.getString("user_id")).complete().getName();
+                String punishmentTypes = resultSet.getString("punishment_type");
+                String duration = resultSet.getString("duration");
+                String reason = resultSet.getString("reason");
+                String timestamp = resultSet.getString("create_stamp");
+                String isServed = resultSet.getString("is_served");
+
+                maxStaffName = Math.max(maxStaffName, staffName.length());
+                maxUserName = Math.max(maxUserName, userName.length());
+                maxPunishmentType = Math.max(maxPunishmentType, punishmentTypes.length());
+                maxDuration = Math.max(maxDuration, duration.length());
+                maxReason = Math.max(maxReason, reason.length());
+                maxTimestamp = Math.max(maxTimestamp, timestamp.length());
+                maxIsServed = Math.max(maxIsServed, isServed.length());
+            }
+
+            // Step 2: Build the dynamic format string with column separators
+            String formatString = String.format("| %%-%ds | %%-%ds | %%-%ds | %%-%ds | %%-%ds | %%-%ds | %%-%ds |\n",
+                    maxStaffName, maxUserName, maxPunishmentType, maxDuration, maxReason, maxTimestamp, maxIsServed);
+
+            // Step 3: Build the header and separator line
+            StringBuilder table = new StringBuilder();
+            table.append(String.format(formatString,
+                    "Staff Name", "User Name", "Punishment Type", "Duration(in ms)", "Reason", "Punished On", "Is Served"));
+            table.append(repeat('-', maxStaffName + maxUserName + maxPunishmentType + maxDuration + maxReason + maxTimestamp + maxIsServed + 23) + "\n");
+
+            // Step 4: Second pass through the result set to format each row
+            resultSet.beforeFirst(); // Move back to the beginning of the ResultSet
+            while (resultSet.next()) {
+                String staffName = event.getJDA().retrieveUserById(resultSet.getString("staff_id")).complete().getName();
+                String userName = event.getJDA().retrieveUserById(resultSet.getString("user_id")).complete().getName();
+                String punishmentTypes = resultSet.getString("punishment_type");
+                String duration = resultSet.getString("duration");
+                String reason = resultSet.getString("reason");
+                String timestamp = resultSet.getString("create_stamp");
+                String isServed = resultSet.getString("is_served");
+
+                table.append(String.format(formatString,
+                        staffName, userName, punishmentTypes, duration, reason, timestamp, isServed));
+            }
+
+            return table.toString();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    // Helper method to repeat a character
+    public static String repeat(char c, int count) {
+        StringBuilder builder = new StringBuilder(count);
+        for (int i = 0; i < count; i++) {
+            builder.append(c);
+        }
+        return builder.toString();
+    }
+
+
+
 }
