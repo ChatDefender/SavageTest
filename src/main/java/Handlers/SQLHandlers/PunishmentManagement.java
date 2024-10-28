@@ -1,5 +1,8 @@
 package Handlers.SQLHandlers;
 
+import Main.functions;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 import java.sql.*;
 
 import static Handlers.SQLHandlers.SQLFunctions.conn;
@@ -218,4 +221,87 @@ public class PunishmentManagement {
         return punishmentType;
 
     }
+
+    public static String getPunishmentTiers(String guildId, String punishment_name) {
+
+        try {
+            // Establish a connection to the database
+            SQLFunctions.verifyConnection();
+
+            // Base query
+            String sql = "SELECT * from punishment_list WHERE guild_id = ?";
+
+            // Add punishment name filter if provided
+            if (punishment_name != null && !punishment_name.isEmpty()) {
+                sql += " AND name = UPPER(?)";
+            }
+
+            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stmt.setString(1, guildId);
+
+            // Set the punishment name parameter if it's included
+            if (punishment_name != null && !punishment_name.isEmpty()) {
+                stmt.setString(2, punishment_name);
+            }
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Step 1: Calculate max width of each column
+            int maxGuildId = "Guild ID".length();
+            int maxPunishmentId = "Punishment ID".length();
+            int maxName = "Name".length();
+            int maxPunishmentTier = "Punishment Tier".length();
+            int maxPunishmentType = "Punishment Type".length();
+            int maxTimeInMs = "Time (ms)".length();
+
+            // First pass through the result set to find the longest values
+            while (resultSet.next()) {
+                String guildIdVal = resultSet.getString("guild_id");
+                String punishmentId = resultSet.getString("punishment_id");
+                String name = resultSet.getString("name");
+                String punishmentTier = resultSet.getString("punishment_tier");
+                String punishmentType = resultSet.getString("punishment_type");
+                String timeInMs = resultSet.getString("time_in_ms");
+
+                maxGuildId = Math.max(maxGuildId, guildIdVal.length());
+                maxPunishmentId = Math.max(maxPunishmentId, punishmentId.length());
+                maxName = Math.max(maxName, name.length());
+                maxPunishmentTier = Math.max(maxPunishmentTier, punishmentTier.length());
+                maxPunishmentType = Math.max(maxPunishmentType, punishmentType.length());
+                maxTimeInMs = Math.max(maxTimeInMs, timeInMs.length());
+            }
+
+            // Step 2: Build the dynamic format string with column separators
+            String formatString = String.format("| %%-%ds | %%-%ds | %%-%ds | %%-%ds | %%-%ds | %%-%ds |\n",
+                    maxGuildId, maxPunishmentId, maxName, maxPunishmentTier, maxPunishmentType, maxTimeInMs);
+
+            // Step 3: Build the header and separator line
+            StringBuilder table = new StringBuilder();
+            table.append(String.format(formatString,
+                    "Guild ID", "Punishment ID", "Name", "Punishment Tier", "Punishment Type", "Time (ms)"));
+            table.append(functions.repeat('-', maxGuildId + maxPunishmentId + maxName + maxPunishmentTier + maxPunishmentType + maxTimeInMs + 19) + "\n");
+
+            // Step 4: Second pass through the result set to format each row
+            resultSet.beforeFirst(); // Move back to the beginning of the ResultSet
+            while (resultSet.next()) {
+                String guildIdVal = resultSet.getString("guild_id");
+                String punishmentId = resultSet.getString("punishment_id");
+                String name = resultSet.getString("name");
+                String punishmentTier = resultSet.getString("punishment_tier");
+                String punishmentType = resultSet.getString("punishment_type");
+                String timeInMs = resultSet.getString("time_in_ms");
+
+                table.append(String.format(formatString,
+                        guildIdVal, punishmentId, name, punishmentTier, punishmentType, timeInMs));
+            }
+
+            return table.toString();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
 }

@@ -40,9 +40,6 @@ public class Punish extends BaseCommand {
                     String punishmentType = PunishmentManagement.getPunishmentTypeFromActive(guildId, user);
                     String duration = PunishmentManagement.getDurationFromActive(guildId, user);
 
-
-                    System.out.println(punishmentType);
-
                     SQLFunctions.Punishments punishment = SQLFunctions.Punishments.valueOf(punishmentType);
 
                     functions.punishUser(punishment, event, member, punishmentName);

@@ -1,11 +1,13 @@
 package Main;
 
+import Commands.ActiveDirectory.PunishmentPerms;
 import Commands.ActiveDirectory.*;
 import Commands.ConfigureBot.SetMutedRole;
 import Commands.ConfigureBot.SetPrefix;
 import Commands.ConfigureBot.SetPunishReset;
 import Commands.ConfigureBot.SetPunishmentLogsChannel;
 import Commands.Log.*;
+import Commands.PunishmentManagement.Punishments;
 import Commands.PunishmentManagement.*;
 import Commands.Punishments.*;
 import Commands.User.Birthday;
@@ -35,7 +37,6 @@ public class Main {
         registerCommands();
 
         jda.addEventListener(new MessageEvent());
-        jda.addEventListener(new RoleDelete());
         jda.addEventListener(new MemberJoin());
         jda.addEventListener(new GuildJoin());
 
@@ -83,6 +84,12 @@ public class Main {
         CommandHandler.registerCommand(new SetPunishReset());
         CommandHandler.registerCommand(new AddPunishment());
         CommandHandler.registerCommand(new RemovePunishment());
+        CommandHandler.registerCommand(new Punishments());
+        CommandHandler.registerCommand(new PunishmentPerms());
+        CommandHandler.registerCommand(new CommandPerms());
+        CommandHandler.registerCommand(new AddCategory());
+        CommandHandler.registerCommand(new RemoveCategory());
+
 
     }
 

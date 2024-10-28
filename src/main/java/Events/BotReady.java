@@ -1,5 +1,6 @@
 package Events;
 
+import Handlers.SQLHandlers.ActiveDirectoryManagement;
 import Handlers.SQLHandlers.ConfigurationSettings;
 import Handlers.SQLHandlers.PunishmentLogManagement;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -19,11 +20,13 @@ public class BotReady extends ListenerAdapter {
 
         event.getJDA().getGuilds().forEach(g -> {
 
-            g.getRoles().forEach(r -> sb.append(r.getId()).append(":"));
+            g.getRoles().forEach(r -> sb.append(r.getId()).append(","));
 
-            // ActiveDirectoryManagement.verifyRoles(sb.toString());
+            ActiveDirectoryManagement.verifyRoles(sb.toString());
 
             ConfigurationSettings.verifyGuildSetting(g.getId());
+
+            sb.delete(0, sb.length());
 
         });
 

@@ -14,7 +14,7 @@ public class AddUnit extends BaseCommand {
                 new String[] { "createunit" },
                 "addunit [unit_name]",
                 "Creates a unit for permission management",
-                "A unit is considered a \"group\". A unit can handle multiple roles and commands. This allows multiple roles to have access to the samee commands",
+                "A unit is considered a \"group\". A unit can handle multiple roles and commands. This allows multiple roles to have access to the same commands",
                 Permission.ADMINISTRATOR);
     }
 
